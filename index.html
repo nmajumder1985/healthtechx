@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FHIR Workbench — MedicationRequest | healthtechx</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f6f3;
+    --bg-info: #e6f1fb;
+    --text: #1a1a1a;
+    --text-secondary: #666660;
+    --border: rgba(0,0,0,0.12);
+    --border-med: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --bg-secondary: #242424;
+      --bg-info: #0c2340;
+      --text: #e8e8e4;
+      --text-secondary: #9a9a94;
+      --border: rgba(255,255,255,0.1);
+      --border-med: rgba(255,255,255,0.2);
+    }
+    .key { color: #5DCAA5 !important; }
+    .str { color: #85B7EB !important; }
+    .num { color: #EF9F27 !important; }
+    .bool { color: #F09595 !important; }
+    .resource-pill { background: #04342C; color: #9FE1CB; }
+    .badge-resource { background: #04342C; color: #9FE1CB; }
+    .badge-terminology { background: #042C53; color: #85B7EB; }
+    .badge-reference { background: #412402; color: #FAC775; }
+    .badge-structure { background: #26215C; color: #CEC BF6; }
+    .badge-status { background: #501313; color: #F7C1C1; }
+    .plain-highlight { background: #04342C; color: #9FE1CB; }
+    .line.active { background: #04342C !important; border-color: #1D9E75 !important; }
+    .scenario-icon { background: #04342C; }
+    .ann-why { border-left-color: #1D9E75; }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* Top nav */
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.75rem 0; border-bottom: 0.5px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+  .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: #1D9E75; }
+  .nav-tag { font-size: 11px; color: var(--text-secondary); border: 0.5px solid var(--border-med); border-radius: 20px; padding: 3px 10px; }
+
+  /* Hero */
+  .hero { margin-bottom: 1.75rem; }
+  .hero-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .resource-pill { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: #E1F5EE; color: #085041; letter-spacing: 0.03em; }
+  .fhir-badge { font-size: 11px; color: var(--text-secondary); border: 0.5px solid var(--border); border-radius: 20px; padding: 3px 10px; }
+  h1 { font-size: 26px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+  .hero-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Scenario card */
+  .scenario-card {
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 1.5rem;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .scenario-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #E1F5EE; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+  }
+  .scenario-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+  .scenario-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+  .scenario-text strong { font-weight: 600; }
+
+  /* Main grid */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .panel-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: var(--bg-secondary);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .ph-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .teal { background: #1D9E75; }
+  .amber { background: #BA7517; }
+  .blue { background: #378ADD; }
+  .panel-title { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; }
+  .panel-body { padding: 14px; overflow-y: auto; max-height: 480px; }
+
+  /* Code */
+  .code-wrap { font-family: var(--font-mono); font-size: 12px; line-height: 2; }
+  .line {
+    display: flex; gap: 10px; padding: 1px 8px;
+    border-radius: 5px; cursor: pointer;
+    transition: background 0.12s; border: 1.5px solid transparent;
+  }
+  .line:hover { background: var(--bg-secondary); }
+  .line.active { background: #E1F5EE; border-color: #5DCAA5; }
+  .lnum { color: var(--text-secondary); min-width: 18px; text-align: right; font-size: 11px; user-select: none; padding-top: 1px; }
+  .key { color: #0F6E56; }
+  .str { color: #185FA5; }
+  .num { color: #BA7517; }
+  .bool { color: #993C1D; }
+
+  .code-hint { font-size: 12px; color: var(--text-secondary); text-align: center; padding: 8px 0 0; }
+
+  /* Annotations */
+  .empty-ann { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 280px; gap: 12px; }
+  .empty-icon { width: 42px; height: 42px; border-radius: 50%; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; }
+  .empty-text { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.65; }
+
+  .ann-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.03em; }
+  .badge-resource { background: #E1F5EE; color: #085041; }
+  .badge-terminology { background: #E6F1FB; color: #0C447C; }
+  .badge-reference { background: #FAEEDA; color: #633806; }
+  .badge-structure { background: #EEEDFE; color: #3C3489; }
+  .badge-status { background: #FCEBEB; color: #791F1F; }
+
+  .ann-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .ann-field { font-size: 14px; font-weight: 600; color: var(--text); }
+  .ann-body { font-size: 13px; color: var(--text); line-height: 1.7; margin-bottom: 12px; }
+  .ann-why { border-left: 2.5px solid #1D9E75; padding-left: 12px; font-size: 12px; color: var(--text-secondary); line-height: 1.65; }
+  .ann-why strong { color: var(--text); font-weight: 500; }
+
+  /* Plain language */
+  .plain-section { border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .plain-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-secondary); border-bottom: 0.5px solid var(--border); }
+  .plain-body { padding: 16px 18px; font-size: 14px; color: var(--text); line-height: 1.8; }
+  .plain-highlight { background: #E1F5EE; color: #085041; border-radius: 3px; padding: 1px 6px; font-weight: 600; }
+
+  /* Footer */
+  .footer { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; }
+  .footer-note { font-size: 12px; color: var(--text-secondary); }
+  .footer-link { font-size: 12px; color: #185FA5; text-decoration: none; }
+  .footer-link:hover { text-decoration: underline; }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="page">
+
+  <nav class="topnav">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <span class="brand-name">healthtechx</span>
+    </div>
+    <span class="nav-tag">FHIR Workbench — Demo</span>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="resource-pill">MedicationRequest</span>
+      <span class="fhir-badge">HL7 FHIR R4</span>
+    </div>
+    <h1>FHIR for everyone</h1>
+    <p class="hero-sub">Plain language in → valid FHIR R4 out. Click any line to understand what it means and why it matters — no coding required.</p>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2H15L20 7V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2H9Z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+    </div>
+    <div>
+      <div class="scenario-label">Clinical scenario</div>
+      <div class="scenario-text">Dr. Sarah Chen prescribes <strong>Metformin 500 mg oral twice daily</strong> for Ahmed Al-Rashid, a 52-year-old male with newly diagnosed Type 2 diabetes. 90-day supply, 3 refills.</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ph-dot teal"></div>
+          <span class="panel-title">FHIR R4 — MedicationRequest Bundle</span>
+        </div>
+        <div class="panel-body">
+          <div class="code-wrap" id="code"></div>
+        </div>
+      </div>
+      <p class="code-hint">Click any line to explore it →</p>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ph-dot amber"></div>
+          <span class="panel-title">Field explained</span>
+        </div>
+        <div class="panel-body" id="ann-panel">
+          <div class="empty-ann">
+            <div class="empty-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="empty-text">Click any line in the FHIR bundle<br>to see what it means and why it matters</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plain-section">
+    <div class="plain-head">
+      <div class="ph-dot blue"></div>
+      <span class="panel-title">Plain language translation</span>
+    </div>
+    <div class="plain-body">
+      Dr. <span class="plain-highlight">Sarah Chen</span> has prescribed <span class="plain-highlight">Metformin 500 mg</span>, to be taken <span class="plain-highlight">by mouth twice a day</span>, for patient <span class="plain-highlight">Ahmed Al-Rashid</span>. This is an <span class="plain-highlight">active order</span> with a <span class="plain-highlight">90-day supply</span> and <span class="plain-highlight">3 refills</span> permitted. The prescription was issued to treat <span class="plain-highlight">Type 2 diabetes mellitus</span> and is coded against internationally recognised clinical terminologies so any connected system — pharmacy, EHR, or payer — can read and act on it without manual re-entry.
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer-note">Built with HL7 FHIR R4 — for demonstration purposes only &mdash; healthtechx &copy; 2026</span>
+    <a class="footer-link" href="https://hl7.org/fhir/R4/medicationrequest.html" target="_blank">FHIR spec →</a>
+  </div>
+
+</div>
+
+<script>
+const lines = [
+  { text: '  "resourceType": "MedicationRequest",', ann: { badge: 'badge-resource', type: 'Resource type', field: 'resourceType', body: 'Tells any FHIR-compliant system exactly what kind of clinical object this is. MedicationRequest covers prescriptions, orders, and requests — from inpatient IV orders to outpatient scripts.', why: '<strong>Why it matters:</strong> Without this, a receiving system cannot parse the payload. It is the first thing every FHIR parser reads.' }},
+  { text: '  "id": "med-req-001",', ann: { badge: 'badge-structure', type: 'Structure', field: 'id', body: 'A logical identifier unique within this FHIR server. In production this would be a server-assigned UUID. It allows other resources (e.g. a MedicationDispense) to reference this specific prescription.', why: '<strong>Why it matters:</strong> Enables cross-resource linking — the pharmacy dispense record will point back to this exact id.' }},
+  { text: '  "status": "active",', ann: { badge: 'badge-status', type: 'Lifecycle', field: 'status', body: 'FHIR defines a controlled vocabulary for prescription status: draft → active → on-hold → completed → cancelled. "Active" means this order is valid and actionable right now.', why: '<strong>Why it matters:</strong> Downstream systems (e.g. pharmacy, decision support) use status to decide whether to act on the order.' }},
+  { text: '  "intent": "order",', ann: { badge: 'badge-status', type: 'Lifecycle', field: 'intent', body: '"Order" signals this is a definitive clinical instruction, not a proposal or plan. Other values include "proposal" (suggested), "plan" (intended future action), or "instance-order" (part of a protocol).', why: '<strong>Why it matters:</strong> Separates care plans from executable orders — critical for clinical decision support logic.' }},
+  { text: '  "medicationCodeableConcept": {', ann: { badge: 'badge-terminology', type: 'Terminology', field: 'medicationCodeableConcept', body: 'FHIR offers two ways to specify a medication: a coded concept (used here) or a reference to a Medication resource. CodeableConcept allows multiple codings from different terminology systems simultaneously.', why: '<strong>Why it matters:</strong> Enables one message to carry both an RxNorm code (for US pharmacies) and a SNOMED code (for clinical records) in parallel.' }},
+  { text: '    "coding": [{ "system": "http://www.nlm.nih.gov/research/umls/rxnorm",', ann: { badge: 'badge-terminology', type: 'Terminology binding', field: 'RxNorm system URI', body: 'The system URI identifies which terminology is being used. This URI points to RxNorm — the US standard for clinical drug nomenclature, maintained by the National Library of Medicine.', why: '<strong>Why it matters:</strong> The URI is machine-resolvable. Any system can look up the full terminology definition, ensuring the code is interpreted correctly.' }},
+  { text: '             "code": "860975", "display": "Metformin 500 MG Oral Tablet" }]', ann: { badge: 'badge-terminology', type: 'Terminology binding', field: 'RxNorm code 860975', body: 'Code 860975 precisely identifies Metformin 500mg oral tablet — not a brand, not a generic family, the exact formulation and dose. The display is human-readable only; systems must use the code.', why: '<strong>Why it matters:</strong> Any US pharmacy system receiving code 860975 knows unambiguously what to dispense. No free-text parsing required.' }},
+  { text: '  "subject": { "reference": "Patient/pat-001", "display": "Ahmed Al-Rashid" },', ann: { badge: 'badge-reference', type: 'Resource reference', field: 'subject', body: 'FHIR uses references rather than embedding data. "Patient/pat-001" means: look up resource type Patient with id pat-001 on this server. The display field is a human-readable fallback only.', why: '<strong>Why it matters:</strong> Prevents data duplication. Patient demographics live in one place; every other resource points to them. Change the patient record once, all references update.' }},
+  { text: '  "requester": { "reference": "Practitioner/prac-001", "display": "Dr. Sarah Chen" },', ann: { badge: 'badge-reference', type: 'Resource reference', field: 'requester', body: 'Links to the Practitioner resource for Dr. Chen, which holds her NPI, qualifications, and contact details. This preserves the chain of accountability — prescriber identity is never ambiguous.', why: '<strong>Why it matters:</strong> Required for e-prescribing audit trails, controlled substance tracking, and medico-legal accountability.' }},
+  { text: '  "dosageInstruction": [{', ann: { badge: 'badge-structure', type: 'Structure', field: 'dosageInstruction', body: 'An array allowing multiple dosage instructions — useful for titration regimens or split dosing. Each entry contains timing, route, dose amount, and administration instructions as structured data, not free text.', why: '<strong>Why it matters:</strong> Structured dosage is machine-readable — clinical decision support can detect dangerous doses, drug interactions, and renal dosing alerts automatically.' }},
+  { text: '    "timing": { "repeat": { "frequency": 2, "period": 1, "periodUnit": "d" } },', ann: { badge: 'badge-structure', type: 'Timing structure', field: 'timing.repeat', body: 'FHIR\'s Timing datatype encodes frequency mathematically: frequency 2 / period 1 / periodUnit "d" = twice per day. This is unambiguous across languages, locales, and systems.', why: '<strong>Why it matters:</strong> "BID" or "twice daily" means different things in different countries. A coded timing leaves no room for mistranslation.' }},
+  { text: '    "route": { "coding": [{ "system": "http://snomed.info/sct", "code": "26643006", "display": "Oral route" }] },', ann: { badge: 'badge-terminology', type: 'Terminology binding', field: 'route (SNOMED CT)', body: 'Route of administration is bound to SNOMED CT — the global clinical terminology standard. Code 26643006 = oral route. Using SNOMED here enables international interoperability beyond US-centric RxNorm.', why: '<strong>Why it matters:</strong> A clinical system in the UAE, UK, or Australia receiving this message can resolve "26643006" to the correct local term automatically.' }},
+  { text: '    "doseAndRate": [{ "doseQuantity": { "value": 500, "unit": "mg",', ann: { badge: 'badge-terminology', type: 'Units of measure', field: 'doseAndRate (UCUM)', body: 'Dose is expressed using UCUM — the Unified Code for Units of Measure. "mg" with system unitsofmeasure.org is unambiguous. FHIR mandates UCUM for all quantities to prevent unit misinterpretation.', why: '<strong>Why it matters:</strong> Unit errors are a leading cause of medication harm. Binding to UCUM makes dose machine-verifiable, not just human-readable.' }},
+  { text: '             "system": "http://unitsofmeasure.org", "code": "mg" } }]', ann: { badge: 'badge-terminology', type: 'Units of measure', field: 'UCUM system URI', body: 'The UCUM system URI makes the unit code resolvable and unambiguous internationally. "mg" in UCUM is milligram — defined precisely, not subject to local interpretation.', why: '<strong>Why it matters:</strong> Prevents the mg vs mcg vs mEq errors that have caused real-world medication harm events.' }},
+  { text: '  "dispenseRequest": {', ann: { badge: 'badge-structure', type: 'Dispense instructions', field: 'dispenseRequest', body: 'Captures dispensing parameters separate from clinical dosage — a key FHIR design principle. Clinical intent (dosage) is separated from operational logistics (dispensing).', why: '<strong>Why it matters:</strong> Pharmacy systems read this directly to manage dispensing limits, prior authorisation requirements, and patient adherence programmes.' }},
+  { text: '    "numberOfRepeatsAllowed": 3,', ann: { badge: 'badge-structure', type: 'Dispense instructions', field: 'numberOfRepeatsAllowed', body: 'Specifies how many times the prescription can be refilled after the initial dispense. Value 3 means the original fill plus 3 refills = 4 total dispenses.', why: '<strong>Why it matters:</strong> Enables automated refill management and controlled substance monitoring without manual pharmacist intervention.' }},
+  { text: '    "quantity": { "value": 90, "unit": "tablets" } }', ann: { badge: 'badge-structure', type: 'Dispense instructions', field: 'quantity', body: '90 tablets covers 45 days at BID dosing. Combined with 3 refills, this gives the patient a full year of medication supply within a single prescription order.', why: '<strong>Why it matters:</strong> Explicit quantity prevents dispensing errors and supports automated prior authorisation for chronic disease medications.' }},
+];
+
+const codeEl = document.getElementById('code');
+let activeLine = null;
+
+lines.forEach((l, i) => {
+  const div = document.createElement('div');
+  div.className = 'line';
+  div.dataset.idx = i;
+  div.innerHTML = `<span class="lnum">${i+1}</span><span>${fmt(l.text)}</span>`;
+  div.addEventListener('click', () => showAnn(i, div));
+  codeEl.appendChild(div);
+});
+
+function fmt(t) {
+  return t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, '<span class="key">$1</span>$2')
+    .replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span class="str">$1</span>')
+    .replace(/:\s*(\d+(?:\.\d+)?)\b/g, ': <span class="num">$1</span>')
+    .replace(/:\s*(true|false)/g, ': <span class="bool">$1</span>');
+}
+
+function showAnn(idx, el) {
+  if (activeLine) activeLine.classList.remove('active');
+  el.classList.add('active');
+  activeLine = el;
+  const a = lines[idx].ann;
+  if (!a) return;
+  document.getElementById('ann-panel').innerHTML = `
+    <div style="padding:4px 0;">
+      <div class="ann-head">
+        <span class="ann-badge ${a.badge}">${a.type}</span>
+        <span class="ann-field">${a.field}</span>
+      </div>
+      <div class="ann-body">${a.body}</div>
+      <div class="ann-why">${a.why}</div>
+    </div>`;
+}
+</script>
+</body>
+</html>
