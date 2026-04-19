@@ -652,6 +652,9 @@ function autoDecodeFhir(){
     if(v.startsWith("{")&&v.endsWith("}")) decodeFhir();
   },800);
 }
+window.decodeFhir=decodeFhir;
+window.clearFhir=clearFhir;
+window.autoDecodeFhir=autoDecodeFhir;
 })();
 </script>
 <!-- END FHIR DECODER -->

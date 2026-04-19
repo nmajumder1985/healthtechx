@@ -496,6 +496,9 @@ function autoDecodeHL7(){
     if(v.startsWith("MSH")) decodeHL7();
   },800);
 }
+window.decodeHL7=decodeHL7;
+window.clearHL7=clearHL7;
+window.autoDecodeHL7=autoDecodeHL7;
 })();
 </script>
 <!-- END HL7 DECODER -->
