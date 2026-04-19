@@ -205,30 +205,27 @@ hr{border:none;border-top:.5px solid var(--border);margin:2.5rem 0;}
   </div>
 
   
+
 <!-- HL7 DECODER SECTION -->
 <div style="margin-top:2.5rem;">
   <div style="border-top:.5px solid var(--border);padding-top:2rem;margin-bottom:1.5rem;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <span style="font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;letter-spacing:.03em;">Try it yourself</span>
-      <span style="font-size:13px;padding:4px 12px;border-radius:20px;background:#f7f6f3;color:var(--text-secondary);border:.5px solid var(--border);">HL7 v2 Decoder</span>
+      <span style="font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;">Try it yourself</span>
+      <span style="font-size:13px;padding:4px 12px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:.5px solid var(--border);">HL7 v2 Decoder</span>
     </div>
-    <h2 style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.01em;">Paste any HL7 v2 message</h2>
-    <p style="font-size:15px;color:var(--text-secondary);line-height:1.65;max-width:600px;">Paste an HL7 v2.x pipe-delimited message below and get a plain-English breakdown of every segment and field — no coding required.</p>
+    <h2 style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px;">Paste any HL7 v2 message</h2>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.65;max-width:600px;">Paste an HL7 v2.x pipe-delimited message below and get a plain-English breakdown of every segment and field.</p>
   </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="hl7-decoder-grid">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
     <div>
       <div style="border:.5px solid var(--border);border-radius:12px;overflow:hidden;">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-secondary);border-bottom:.5px solid var(--border);">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;"></div>
-            <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Paste HL7 message here</span>
-          </div>
-          <button onclick="clearHL7()" style="font-size:11px;color:var(--text-secondary);background:none;border:.5px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;">Clear</button>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;"></div><span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Paste HL7 message here</span></div>
+          <button onclick="hl7Clear()" style="font-size:11px;color:var(--text-secondary);background:none;border:.5px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;">Clear</button>
         </div>
         <div style="padding:12px;">
-          <textarea id="hl7-input" placeholder="Paste an HL7 v2 message here, e.g.&#10;MSH|^~\&|HIS|HOSPITAL|ADT|HOSPITAL|20240315||ADT^A01|MSG001|P|2.5&#10;PID|1||PAT001^^^HOSPITAL^MR||SMITH^JOHN|||M" style="width:100%;min-height:260px;resize:vertical;font-family:monospace;font-size:13px;line-height:1.8;background:var(--bg);color:var(--text);border:.5px solid var(--border);border-radius:8px;padding:12px;box-sizing:border-box;" oninput="autoDecodeHL7()"></textarea>
-          <button onclick="decodeHL7()" style="margin-top:10px;width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.01em;">Decode →</button>
+          <textarea id="hl7-input" placeholder="MSH|^~\&|HIS|HOSPITAL|ADT|HOSPITAL|20240315||ADT^A01|MSG001|P|2.5" style="width:100%;min-height:260px;resize:vertical;font-family:monospace;font-size:13px;line-height:1.8;background:var(--bg);color:var(--text);border:.5px solid var(--border);border-radius:8px;padding:12px;box-sizing:border-box;"></textarea>
+          <button onclick="hl7Decode()" style="margin-top:10px;width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;">Decode &rarr;</button>
         </div>
       </div>
     </div>
@@ -239,269 +236,94 @@ hr{border:none;border-top:.5px solid var(--border);margin:2.5rem 0;}
           <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Plain English explanation</span>
         </div>
         <div id="hl7-output" style="padding:14px;overflow-y:auto;max-height:420px;">
-          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:10px;color:var(--text-secondary);font-size:14px;text-align:center;">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Paste an HL7 message on the left<br>and click Decode
-          </div>
+          <div style="display:flex;align-items:center;justify-content:center;height:260px;color:var(--text-secondary);font-size:14px;text-align:center;">Paste an HL7 message on the left and click Decode</div>
         </div>
       </div>
     </div>
   </div>
-
   <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;padding:10px 14px;background:var(--bg-secondary);border-radius:8px;border:.5px solid var(--border);line-height:1.6;">
-    <strong style="color:var(--text);">Learning tool notice:</strong> This decoder is designed for standard HL7 v2.x messages used in education (ADT, ORM, ORU, MDM). Highly customised Z-segments, proprietary extensions, or non-standard delimiters may not be fully recognised. For production-grade HL7 analysis, use <a href="https://hl7inspector.com" target="_blank" style="color:#185FA5;">HL7 Inspector</a> or your integration engine&#39;s built-in tools.
+    <strong style="color:var(--text);">Learning tool notice:</strong> Built for standard HL7 v2.x messages used in education (ADT, ORM, ORU). Z-segments, proprietary extensions, or non-standard delimiters may not be fully recognised. For production-grade analysis use <a href="https://hl7inspector.com" target="_blank" style="color:#185FA5;">HL7 Inspector</a>.
   </p>
 </div>
-
-<style>
-@media(max-width:620px){#hl7-decoder-grid{grid-template-columns:1fr!important;}}
-</style>
-
 <script>
-(function(){
-const SEG_DEFS = {
-  MSH:{
-    label:"Message Header",
-    color:"#1D9E75",bg:"#E1F5EE",
-    desc:"The first segment of every HL7 v2 message. Defines the message envelope — who sent it, who receives it, what type it is, and when.",
-    fields:["Field separator","Encoding characters","Sending application","Sending facility","Receiving application","Receiving facility","Date/time of message","Security","Message type","Message control ID","Processing ID","Version ID","Sequence number","Continuation pointer","Accept acknowledgement type","Application acknowledgement type","Country code","Character set","Principal language of message"]
-  },
-  EVN:{
-    label:"Event Type",
-    color:"#1D9E75",bg:"#E1F5EE",
-    desc:"Provides additional context about the event that triggered this message. Mandatory in ADT messages.",
-    fields:["Event type code","Recorded date/time","Date/time planned event","Event reason code","Operator ID","Event occurred","Event facility"]
-  },
-  PID:{
-    label:"Patient Identification",
-    color:"#185FA5",bg:"#E6F1FB",
-    desc:"The most critical segment — uniquely identifies the patient. Errors here cause dangerous mismatches across systems.",
-    fields:["Set ID","Patient ID (external — deprecated)","Patient identifier list","Alternate patient ID (deprecated)","Patient name","Mother's maiden name","Date of birth","Administrative sex","Patient alias","Race","Patient address","County code","Phone number (home)","Phone number (business)","Primary language","Marital status","Religion","Patient account number","SSN number (deprecated)","Driver's licence","Mother's identifier","Ethnic group","Birth place","Multiple birth indicator","Birth order","Citizenship","Veterans military status","Nationality","Patient death date/time","Patient death indicator","Identity unknown indicator","Identity reliability code","Last update date/time","Last update facility","Species code","Breed code","Strain","Production class code","Tribal citizenship"]
-  },
-  PV1:{
-    label:"Patient Visit",
-    color:"#533AB7",bg:"#EEEDFE",
-    desc:"Describes the current encounter — patient location, class of care, attending physician, and visit identifier.",
-    fields:["Set ID","Patient class","Assigned patient location","Admission type","Preadmit number","Prior patient location","Attending doctor","Referring doctor","Consulting doctor","Hospital service","Temporary location","Preadmit test indicator","Re-admission indicator","Admit source","Ambulatory status","VIP indicator","Admitting doctor","Patient type","Visit number","Financial class","Charge price indicator","Courtesy code","Credit rating","Contract code","Contract effective date","Contract amount","Contract period","Interest code","Transfer to bad debt code","Transfer to bad debt date","Bad debt agency code","Bad debt transfer amount","Bad debt recovery amount","Delete account indicator","Delete account date","Discharge disposition","Discharge to location","Diet type","Serving facility","Bed status","Account status","Pending location","Prior temporary location","Admit date/time","Discharge date/time","Current patient balance","Total charges","Total adjustments","Total payments","Alternate visit ID","Visit indicator","Other healthcare provider"]
-  },
-  ORC:{
-    label:"Common Order",
-    color:"#BA7517",bg:"#FAEEDA",
-    desc:"The administrative backbone of any order. Controls the order lifecycle (new, cancel, hold) and links placer to filler.",
-    fields:["Order control","Placer order number","Filler order number","Placer group number","Order status","Response flag","Quantity/timing","Parent order","Date/time of transaction","Entered by","Verified by","Ordering provider","Enterer's location","Call back phone number","Order effective date/time","Order control code reason","Entering organisation","Entering device","Action by","Advanced beneficiary notice code","Ordering facility name","Ordering facility address","Ordering facility phone number","Ordering provider address","Order status modifier","Advanced beneficiary notice override reason","Filler's expected availability date/time","Confidentiality code","Order type","Enterer authorisation mode","Parent universal service identifier"]
-  },
-  OBR:{
-    label:"Observation Request",
-    color:"#BA7517",bg:"#FAEEDA",
-    desc:"Specifies what test is ordered or resulted using LOINC codes. The clinical heart of every lab order and result.",
-    fields:["Set ID","Placer order number","Filler order number","Universal service identifier","Priority (deprecated)","Requested date/time (deprecated)","Observation date/time","Observation end date/time","Collection volume","Collector identifier","Specimen action code","Danger code","Relevant clinical information","Specimen received date/time","Specimen source (deprecated)","Ordering provider","Order callback phone number","Placer field 1","Placer field 2","Filler field 1","Filler field 2","Results reported/status changed date/time","Charge to practice","Diagnostic service section ID","Result status","Parent result","Quantity/timing","Result copies to","Parent number","Transportation mode","Reason for study","Principal result interpreter","Assistant result interpreter","Technician","Transcriptionist","Scheduled date/time","Number of sample containers","Transport logistics of collected sample","Collector's comment","Transport arrangement responsibility","Transport arranged","Escort required","Planned patient transport comment","Procedure code","Procedure code modifier","Placer supplemental service information","Filler supplemental service information","Medically necessary duplicate procedure reason","Result handling","Parent universal service identifier"]
-  },
-  OBX:{
-    label:"Observation Result",
-    color:"#0F6E56",bg:"#E1F5EE",
-    desc:"Contains a single observation value. One OBX per result component (e.g. haemoglobin, WBC, platelets each get their own OBX).",
-    fields:["Set ID","Value type","Observation identifier","Observation sub-ID","Observation value","Units","Reference range","Abnormal flags","Probability","Nature of abnormal test","Observation result status","Effective date of reference range","User defined access checks","Date/time of observation","Producer's ID","Responsible observer","Observation method","Equipment instance identifier","Date/time of analysis","Reserved","Reserved","Reserved","Performing organisation name","Performing organisation address","Performing organisation medical director"]
-  },
-  PV2:{
-    label:"Patient Visit — Additional Information",
-    color:"#533AB7",bg:"#EEEDFE",
-    desc:"Extension of PV1 with additional visit details — accommodation, expected stay, transfer reason.",
-    fields:["Prior pending location","Accommodation code","Admit reason","Transfer reason","Patient valuables","Patient valuables location","Visit user code","Expected admit date/time","Expected discharge date/time","Estimated length of inpatient stay","Actual length of inpatient stay","Visit description","Referral source code","Previous service date","Employment illness related indicator","Purge status code","Purge status date","Special programme code","Retention indicator","Expected number of insurance plans","Visit publicity code","Visit protection indicator","Clinic organisation name","Patient status code","Visit priority code","Previous treatment date","Expected discharge disposition","Signature on file date","First similar illness prior date","Patient charge adjustment code","Recurring service code","Billing media code","Expected surgery date/time","Military partnership code","Military non-availability code","Newborn baby indicator","Baby detained indicator","Mode of arrival code","Recreational drug use code","Admission level of care code","Precaution code","Patient condition code","Living will code","Organ donor code","Advance directive code","Patient status effective date","Expected LOA return date/time","Expected pre-admission testing date/time","Notify clergy code"]
-  },
-  NK1:{
-    label:"Next of Kin / Associated Parties",
-    color:"#185FA5",bg:"#E6F1FB",
-    desc:"Next of kin or emergency contact details. Multiple NK1 segments can appear for multiple contacts.",
-    fields:["Set ID","Name","Relationship","Address","Phone number","Business phone number","Contact role","Start date","End date","Job title","Job code/class","Employee number","Organisation name","Marital status","Administrative sex","Date of birth","Living dependency","Ambulatory status","Citizenship","Primary language","Living arrangement","Publicity code","Protection indicator","Student indicator","Religion","Mother's maiden name","Nationality","Ethnic group","Contact reason","Contact person's name","Contact telephone number","Contact address","Associated party's identifiers","Job status","Race","Handicap","Contact person social security number","Next of kin birth place","VIP indicator"]
-  },
-  AL1:{
-    label:"Allergy Information",
-    color:"#A32D2D",bg:"#FCEBEB",
-    desc:"Documents a known allergy or intolerance. One AL1 per allergy.",
-    fields:["Set ID","Allergen type code","Allergen code/mnemonic/description","Allergy severity code","Allergy reaction code","Identification date"]
-  },
-  DG1:{
-    label:"Diagnosis",
-    color:"#BA7517",bg:"#FAEEDA",
-    desc:"A diagnosis associated with this encounter. Uses ICD coding. Multiple DG1 segments for multiple diagnoses.",
-    fields:["Set ID","Diagnosis coding method","Diagnosis code","Diagnosis description","Diagnosis date/time","Diagnosis type","Major diagnostic category","Diagnostic related group","DRG approval indicator","DRG grouper review code","Outlier type","Outlier days","Outlier cost","Grouper version and type","Diagnosis priority","Diagnosing clinician","Diagnosis classification","Confidential indicator","Attestation date/time","Diagnosis identifier","Diagnosis action code"]
-  },
-  NTE:{
-    label:"Notes and Comments",
-    color:"#5F5E5A",bg:"#F1EFE8",
-    desc:"Free-text notes attached to a segment. Can follow many segment types.",
-    fields:["Set ID","Source of comment","Comment","Comment type"]
-  },
-  MSA:{
-    label:"Message Acknowledgement",
-    color:"#1D9E75",bg:"#E1F5EE",
-    desc:"Sent in response to a message (ACK). Confirms receipt and processing status.",
-    fields:["Acknowledgement code","Message control ID","Text message","Expected sequence number","Delayed acknowledgement type (deprecated)","Error condition"]
-  },
-  IN1:{
-    label:"Insurance",
-    color:"#185FA5",bg:"#E6F1FB",
-    desc:"Insurance plan details associated with this patient visit.",
-    fields:["Set ID","Insurance plan ID","Insurance company ID","Insurance company name","Insurance company address","Insurance company contact person","Insurance company phone number","Group number","Group name","Insured's group employer ID","Insured's group employer name","Plan effective date","Plan expiration date","Authorisation information","Plan type","Name of insured","Insured's relationship to patient","Insured's date of birth","Insured's address","Assignment of benefits","Coordination of benefits","Coordination of benefits priority","Notice of admission flag","Notice of admission date","Report of eligibility flag","Report of eligibility date","Release information code","Pre-admit certification","Verification date/time","Verification by","Type of agreement code","Billing status","Lifetime reserve days","Delay before lifetime reserve days","Company plan code","Policy number","Policy deductible","Policy limit amount","Policy limit days","Room rate semi-private","Room rate private","Insured's employment status","Insured's administrative sex","Insured's employer's address","Verification status","Prior insurance plan ID","Coverage type","Handicap","Insured's ID number","Signature code","Signature code date","Insured's birth place","VIP indicator"]
-  }
+var HL7_SEG_DEFS = {
+  MSH:{label:"Message Header",color:"#1D9E75",bg:"#E1F5EE",desc:"The first segment of every HL7 v2 message — defines who sent it, who receives it, type of message, and when.",fields:["Field separator","Encoding characters","Sending application","Sending facility","Receiving application","Receiving facility","Date/time of message","Security","Message type","Message control ID","Processing ID","Version ID","Sequence number","Continuation pointer","Accept ack type","Application ack type","Country code","Character set","Principal language"]},
+  EVN:{label:"Event Type",color:"#1D9E75",bg:"#E1F5EE",desc:"Additional context about the event that triggered this message. Mandatory in ADT messages.",fields:["Event type code","Recorded date/time","Date/time planned event","Event reason code","Operator ID","Event occurred","Event facility"]},
+  PID:{label:"Patient Identification",color:"#185FA5",bg:"#E6F1FB",desc:"The most critical segment — uniquely identifies the patient. Errors here cause dangerous mismatches across systems.",fields:["Set ID","Patient ID (deprecated)","Patient identifier list","Alternate patient ID (deprecated)","Patient name","Mother's maiden name","Date of birth","Administrative sex","Patient alias","Race","Patient address","County code","Phone number home","Phone number business","Primary language","Marital status","Religion","Patient account number","SSN (deprecated)","Driver's licence","Mother's identifier","Ethnic group","Birth place","Multiple birth indicator","Birth order","Citizenship","Veterans military status","Nationality","Patient death date/time","Patient death indicator"]},
+  PV1:{label:"Patient Visit",color:"#533AB7",bg:"#EEEDFE",desc:"Describes the current encounter — patient location, class of care, attending physician, and visit identifier.",fields:["Set ID","Patient class","Assigned patient location","Admission type","Preadmit number","Prior patient location","Attending doctor","Referring doctor","Consulting doctor","Hospital service","Temporary location","Preadmit test indicator","Re-admission indicator","Admit source","Ambulatory status","VIP indicator","Admitting doctor","Patient type","Visit number","Financial class","Charge price indicator","Courtesy code","Credit rating","Contract code","Contract effective date","Contract amount","Contract period","Interest code","Transfer to bad debt code","Transfer to bad debt date","Bad debt agency code","Bad debt transfer amount","Bad debt recovery amount","Delete account indicator","Delete account date","Discharge disposition","Discharge to location","Diet type","Serving facility","Bed status","Account status","Pending location","Prior temporary location","Admit date/time","Discharge date/time","Current patient balance","Total charges","Total adjustments","Total payments","Alternate visit ID","Visit indicator"]},
+  ORC:{label:"Common Order",color:"#BA7517",bg:"#FAEEDA",desc:"Administrative backbone of any order — controls lifecycle (new, cancel, hold) and links placer to filler.",fields:["Order control","Placer order number","Filler order number","Placer group number","Order status","Response flag","Quantity/timing","Parent order","Date/time of transaction","Entered by","Verified by","Ordering provider","Enterer location","Callback phone","Order effective date/time","Order control code reason","Entering organisation","Entering device","Action by","Advance beneficiary notice code","Ordering facility name","Ordering facility address","Ordering facility phone","Ordering provider address","Order status modifier"]},
+  OBR:{label:"Observation Request",color:"#BA7517",bg:"#FAEEDA",desc:"Specifies what test is ordered or resulted using LOINC codes. The clinical heart of every lab order and result.",fields:["Set ID","Placer order number","Filler order number","Universal service identifier","Priority (deprecated)","Requested date/time (deprecated)","Observation date/time","Observation end date/time","Collection volume","Collector identifier","Specimen action code","Danger code","Relevant clinical info","Specimen received date/time","Specimen source (deprecated)","Ordering provider","Order callback phone","Placer field 1","Placer field 2","Filler field 1","Filler field 2","Results reported date/time","Charge to practice","Diagnostic service section ID","Result status","Parent result","Quantity/timing","Result copies to","Parent number","Transportation mode","Reason for study","Principal result interpreter","Assistant result interpreter","Technician","Transcriptionist","Scheduled date/time","Number of sample containers","Transport logistics","Collector comment","Transport arrangement responsibility","Transport arranged","Escort required","Planned patient transport comment","Procedure code","Procedure code modifier"]},
+  OBX:{label:"Observation Result",color:"#0F6E56",bg:"#E1F5EE",desc:"One observation value. One OBX per result component — haemoglobin, WBC, and platelets each get their own OBX.",fields:["Set ID","Value type","Observation identifier","Observation sub-ID","Observation value","Units","Reference range","Abnormal flags","Probability","Nature of abnormal test","Observation result status","Effective date of reference range","User defined access checks","Date/time of observation","Producer ID","Responsible observer","Observation method","Equipment instance identifier","Date/time of analysis"]},
+  NK1:{label:"Next of Kin",color:"#185FA5",bg:"#E6F1FB",desc:"Next of kin or emergency contact. Multiple NK1 segments for multiple contacts.",fields:["Set ID","Name","Relationship","Address","Phone number","Business phone","Contact role","Start date","End date","Job title","Job code/class","Employee number","Organisation name","Marital status","Administrative sex","Date of birth","Living dependency","Ambulatory status","Citizenship","Primary language"]},
+  AL1:{label:"Allergy Information",color:"#A32D2D",bg:"#FCEBEB",desc:"One known allergy or intolerance. One AL1 per allergy.",fields:["Set ID","Allergen type code","Allergen code/description","Allergy severity code","Allergy reaction code","Identification date"]},
+  DG1:{label:"Diagnosis",color:"#BA7517",bg:"#FAEEDA",desc:"A diagnosis coded with ICD. Multiple DG1 segments for multiple diagnoses.",fields:["Set ID","Diagnosis coding method","Diagnosis code","Diagnosis description","Diagnosis date/time","Diagnosis type","Major diagnostic category","DRG","DRG approval indicator","DRG grouper review code","Outlier type","Outlier days","Outlier cost","Grouper version","Diagnosis priority","Diagnosing clinician","Diagnosis classification","Confidential indicator","Attestation date/time","Diagnosis identifier","Diagnosis action code"]},
+  NTE:{label:"Notes and Comments",color:"#5F5E5A",bg:"#F1EFE8",desc:"Free-text notes attached to a segment.",fields:["Set ID","Source of comment","Comment","Comment type"]},
+  MSA:{label:"Message Acknowledgement",color:"#1D9E75",bg:"#E1F5EE",desc:"Sent in response (ACK). Confirms receipt and processing status.",fields:["Acknowledgement code","Message control ID","Text message","Expected sequence number","Delayed ack type (deprecated)","Error condition"]},
+  PV2:{label:"Patient Visit Additional Info",color:"#533AB7",bg:"#EEEDFE",desc:"Extension of PV1 with accommodation, expected stay, and transfer reason.",fields:["Prior pending location","Accommodation code","Admit reason","Transfer reason","Patient valuables","Patient valuables location","Visit user code","Expected admit date/time","Expected discharge date/time","Estimated length of stay","Actual length of stay","Visit description","Referral source code","Previous service date","Employment illness related indicator"]}
 };
 
-const MSG_TYPES={
-  "ADT^A01":"Patient Admission","ADT^A02":"Patient Transfer","ADT^A03":"Patient Discharge",
-  "ADT^A04":"Patient Registration","ADT^A05":"Pre-Admission","ADT^A06":"Change Outpatient to Inpatient",
-  "ADT^A07":"Change Inpatient to Outpatient","ADT^A08":"Patient Information Update","ADT^A11":"Cancel Admission",
-  "ADT^A12":"Cancel Transfer","ADT^A13":"Cancel Discharge","ADT^A28":"Add Person Information",
-  "ADT^A31":"Update Person Information","ADT^A40":"Merge Patient","ORM^O01":"New Order",
-  "ORU^R01":"Observation Result (Unsolicited)","ACK":"General Acknowledgement",
-  "MDM^T02":"Document Status Change with Content","SIU^S12":"Notification of New Appointment",
-  "SIU^S14":"Notification of Appointment Modification","SIU^S15":"Notification of Appointment Cancellation",
-  "VXU^V04":"Unsolicited Vaccination Record Update","RDE^O11":"Pharmacy/Treatment Encoded Order",
-  "RDS^O13":"Pharmacy/Treatment Dispense","BAR^P01":"Add Patient Account","DFT^P03":"Post Detail Financial Transaction"
-};
+var HL7_MSG_TYPES = {"ADT^A01":"Patient Admission","ADT^A02":"Patient Transfer","ADT^A03":"Patient Discharge","ADT^A04":"Patient Registration","ADT^A08":"Patient Information Update","ADT^A11":"Cancel Admission","ADT^A28":"Add Person","ADT^A31":"Update Person","ADT^A40":"Merge Patient","ORM^O01":"New Order","ORU^R01":"Observation Result","ACK":"General Acknowledgement","MDM^T02":"Document with Content","SIU^S12":"New Appointment","SIU^S14":"Appointment Modification","SIU^S15":"Appointment Cancellation","RDE^O11":"Pharmacy Order","BAR^P01":"Add Patient Account","DFT^P03":"Post Financial Transaction"};
+var HL7_ORDER_CTRL = {"NW":"New order","CA":"Cancel","DC":"Discontinue","HD":"Hold","RL":"Release hold","XO":"Change order","RE":"Observations to follow","OK":"Order accepted"};
+var HL7_PT_CLASS = {"I":"Inpatient","O":"Outpatient","E":"Emergency","R":"Recurring","P":"Preadmit","B":"Obstetrics"};
+var HL7_RESULT_STATUS = {"F":"Final","P":"Preliminary","C":"Correction","I":"Pending","R":"Entered not verified","S":"Partial","X":"Cannot obtain"};
+var HL7_ABN = {"L":"Low","H":"High","LL":"Critically low","HH":"Critically high","A":"Abnormal","N":"Normal","<":"Off scale low",">":"Off scale high"};
 
-const ORDER_CONTROLS={"NW":"New order","CA":"Cancel order","DC":"Discontinue order","HD":"Hold order","RL":"Release hold","XO":"Change order","OF":"Order found","OK":"Order accepted","UA":"Unable to accept order","ER":"Error"};
-const PATIENT_CLASS={"I":"Inpatient","O":"Outpatient","E":"Emergency","R":"Recurring patient","P":"Preadmit","B":"Obstetrics","C":"Commercial Account","N":"Not Applicable","U":"Unknown"};
-const RESULT_STATUS={"F":"Final","P":"Preliminary","C":"Correction","D":"Delete","I":"Pending","O":"Order detail description only","R":"Results entered, not yet verified","S":"Partial","U":"Results status change to Final","W":"Post original as wrong","X":"Results cannot be obtained for this observation"};
-const ABN_FLAGS={"L":"Low","H":"High","LL":"Critically low","HH":"Critically high","<":"Off scale low",">":"Off scale high","A":"Abnormal","AA":"Critically abnormal","N":"Normal","I":"Intermediate","S":"Susceptible","R":"Resistant","MS":"Moderately susceptible","VS":"Very susceptible","B":"Better","W":"Worse","U":"Significant change up","D":"Significant change down"};
-
-function parseHL7Msg(raw){
-  // Normalise line endings
-  var lines=raw.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(function(l){return l.trim().length>0;});
-  return lines.map(function(line){
-    var seg=line.substring(0,3);
-    var fields;
-    if(seg==="MSH"){
-      // MSH: field sep is MSH[3], so fields are split differently
-      fields=[line.substring(3,4)].concat(line.substring(3).split("|"));
-    } else {
-      fields=line.split("|");
-    }
-    return {seg:seg, raw:line, fields:fields};
-  });
-}
-
-function explainField(segName, fieldIdx, value){
-  var def=SEG_DEFS[segName];
-  if(!def||!def.fields) return null;
-  if(fieldIdx<def.fields.length) return def.fields[fieldIdx];
-  return null;
-}
-
-function renderHL7Value(segName, fieldIdx, value){
-  if(!value||value.trim()==="") return '<em style="color:var(--text-secondary);font-size:12px;">empty</em>';
-  // Add semantic hints for known fields
-  var hint="";
-  if(segName==="MSH"&&fieldIdx===8){
-    var mt=MSG_TYPES[value]||MSG_TYPES[value.split("^")[0]];
-    if(mt) hint=' <span style="font-size:11px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:4px;">'+mt+'</span>';
+function hl7Decode() {
+  var raw = document.getElementById("hl7-input").value.trim();
+  var out = document.getElementById("hl7-output");
+  if(!raw) { out.innerHTML='<div style="padding:20px;color:var(--text-secondary);">Please paste an HL7 message first.</div>'; return; }
+  var lines = raw.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(function(l){return l.trim().length>0;});
+  if(!lines.length||lines[0].substring(0,3)!=="MSH") {
+    out.innerHTML='<div style="padding:14px;background:#FAEEDA;border-radius:8px;color:#633806;font-size:14px;"><strong>Invalid HL7 message</strong> — must start with MSH segment.</div>'; return;
   }
-  if(segName==="ORC"&&fieldIdx===1){
-    var oc=ORDER_CONTROLS[value];
-    if(oc) hint=' <span style="font-size:11px;background:#FAEEDA;color:#633806;padding:1px 6px;border-radius:4px;">'+oc+'</span>';
-  }
-  if(segName==="PV1"&&fieldIdx===2){
-    var pc=PATIENT_CLASS[value];
-    if(pc) hint=' <span style="font-size:11px;background:#EEEDFE;color:#3C3489;padding:1px 6px;border-radius:4px;">'+pc+'</span>';
-  }
-  if(segName==="OBX"&&fieldIdx===11){
-    var rs=RESULT_STATUS[value];
-    if(rs) hint=' <span style="font-size:11px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:4px;">'+rs+'</span>';
-  }
-  if(segName==="OBX"&&fieldIdx===8){
-    var af=ABN_FLAGS[value];
-    if(af) hint=' <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:1px 6px;border-radius:4px;">'+af+'</span>';
-  }
-  var display=value.length>100?value.substring(0,100)+"…":value;
-  return '<span style="font-family:monospace;font-size:13px;color:#185FA5;word-break:break-all;">'+display+'</span>'+hint;
-}
-
-function decodeHL7(){
-  var raw=document.getElementById("hl7-input").value.trim();
-  var out=document.getElementById("hl7-output");
-  if(!raw){
-    out.innerHTML='<div style="padding:20px;color:var(--text-secondary);font-size:14px;">Please paste an HL7 message first.</div>';
-    return;
-  }
-  var segments=parseHL7Msg(raw);
-  if(!segments.length||segments[0].seg!=="MSH"){
-    out.innerHTML='<div style="padding:14px;background:#FAEEDA;border-radius:8px;font-size:14px;color:#633806;"><strong>Invalid HL7 message</strong> — Every HL7 v2 message must start with an MSH segment. Make sure you have copied the complete message including the MSH line.</div>';
-    return;
-  }
-  // Detect message type from MSH-9
-  var mshFields=segments[0].fields;
-  var msgTypeRaw=mshFields[9]||"";
-  var msgType=MSG_TYPES[msgTypeRaw]||MSG_TYPES[msgTypeRaw.split("^")[0]]||msgTypeRaw;
-  var segCount=segments.length;
-  var knownSegs=segments.filter(function(s){return SEG_DEFS[s.seg];}).length;
-  var unknownSegs=segments.filter(function(s){return !SEG_DEFS[s.seg];}).map(function(s){return s.seg;});
-
-  var html='<div style="margin-bottom:14px;">'
-    +'<span style="display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;margin-bottom:8px;">HL7 v2 — '+msgTypeRaw+'</span>'
-    +'<div style="font-size:14px;color:var(--text);line-height:1.7;">Message type: <strong>'+msgType+'</strong> &mdash; '+segCount+' segment'+(segCount!==1?'s':'')+' detected.</div>'
-    +'</div>';
-
-  segments.forEach(function(s, si){
-    var def=SEG_DEFS[s.seg];
-    var color=def?def.color:"#888";
-    var bg=def?def.bg:"#f7f6f3";
-    var label=def?def.label:s.seg+" (Z-segment or custom)";
-    var desc=def?def.desc:"Custom or Z-segment. Not in the standard HL7 v2 segment library for this learning tool.";
-
-    html+='<div style="margin-bottom:16px;border:.5px solid var(--border);border-radius:10px;overflow:hidden;">'
+  var segments = lines.map(function(line){ return {seg:line.substring(0,3), fields:line.split("|"), raw:line}; });
+  var mshFields = segments[0].fields;
+  var msgTypeRaw = mshFields[8]||"";
+  var msgType = HL7_MSG_TYPES[msgTypeRaw]||HL7_MSG_TYPES[msgTypeRaw.split("^")[0]]||msgTypeRaw;
+  var unknownSegs = [];
+  var html = '<div style="margin-bottom:14px;"><span style="display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;margin-bottom:8px;">HL7 v2 &mdash; '+msgTypeRaw+'</span><div style="font-size:14px;line-height:1.7;">Message type: <strong>'+msgType+'</strong> &mdash; '+segments.length+' segment'+(segments.length!==1?"s":"")+" detected.</div></div>";
+  segments.forEach(function(s){
+    var def = HL7_SEG_DEFS[s.seg];
+    var color = def?def.color:"#888";
+    var bg = def?def.bg:"#f7f6f3";
+    var label = def?def.label:(s.seg+" (custom/Z-segment)");
+    var desc = def?def.desc:"Custom or Z-segment — not in the standard HL7 v2 library for this learning tool.";
+    if(!def) unknownSegs.push(s.seg);
+    html += '<div style="margin-bottom:16px;border:.5px solid var(--border);border-radius:10px;overflow:hidden;">'
       +'<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:'+bg+';border-bottom:.5px solid var(--border);">'
       +'<span style="font-size:12px;font-weight:700;color:'+color+';font-family:monospace;">'+s.seg+'</span>'
-      +'<span style="font-size:13px;font-weight:600;color:'+color+';">'+label+'</span>'
-      +'</div>'
+      +'<span style="font-size:13px;font-weight:600;color:'+color+';">'+label+'</span></div>'
       +'<div style="padding:8px 12px 4px;font-size:12px;color:var(--text-secondary);line-height:1.6;border-bottom:.5px solid var(--border);">'+desc+'</div>'
-      +'<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-      +'<thead><tr style="border-bottom:.5px solid var(--border);">'
-      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;width:30px;">#</th>'
-      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;width:28%;">Field name</th>'
-      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;">Value</th>'
+      +'<table style="width:100%;border-collapse:collapse;"><thead><tr style="border-bottom:.5px solid var(--border);">'
+      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;width:28px;">#</th>'
+      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;width:28%;">Field</th>'
+      +'<th style="padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;">Value</th>'
       +'</tr></thead><tbody>';
-
-    // For MSH, fields start at index 1 (field sep is implicit)
-    var startIdx=s.seg==="MSH"?1:1;
-    var displayFields=s.fields.slice(startIdx);
-    displayFields.forEach(function(fval, fi){
-      var realIdx=s.seg==="MSH"?fi+1:fi+1;
-      var fname=explainField(s.seg, realIdx, fval)||("Field "+realIdx);
-      var isEmpty=!fval||fval.trim()==="";
-      html+='<tr style="border-bottom:.5px solid var(--border);">'
-        +'<td style="padding:6px 10px;color:var(--text-secondary);font-family:monospace;font-size:11px;vertical-align:top;">'+realIdx+'</td>'
-        +'<td style="padding:6px 10px;font-size:12px;color:var(--text);vertical-align:top;font-weight:500;">'+fname+'</td>'
-        +'<td style="padding:6px 10px;vertical-align:top;">'+renderHL7Value(s.seg, realIdx, fval)+'</td>'
-        +'</tr>';
+    s.fields.slice(1).forEach(function(fval,fi){
+      var idx=fi+1;
+      var fname=(def&&def.fields&&idx<=def.fields.length)?def.fields[idx-1]:("Field "+idx);
+      var hint="";
+      if(s.seg==="MSH"&&idx===9){var mt=HL7_MSG_TYPES[fval]||HL7_MSG_TYPES[(fval||"").split("^")[0]];if(mt)hint=' <span style="font-size:11px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:4px;">'+mt+'</span>';}
+      if(s.seg==="ORC"&&idx===1){var oc=HL7_ORDER_CTRL[fval];if(oc)hint=' <span style="font-size:11px;background:#FAEEDA;color:#633806;padding:1px 6px;border-radius:4px;">'+oc+'</span>';}
+      if(s.seg==="PV1"&&idx===2){var pc=HL7_PT_CLASS[fval];if(pc)hint=' <span style="font-size:11px;background:#EEEDFE;color:#3C3489;padding:1px 6px;border-radius:4px;">'+pc+'</span>';}
+      if(s.seg==="OBX"&&idx===11){var rs=HL7_RESULT_STATUS[fval];if(rs)hint=' <span style="font-size:11px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:4px;">'+rs+'</span>';}
+      if(s.seg==="OBX"&&idx===8){var af=HL7_ABN[fval];if(af)hint=' <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:1px 6px;border-radius:4px;">'+af+'</span>';}
+      var display=fval?'<span style="font-family:monospace;font-size:13px;color:#185FA5;word-break:break-all;">'+(fval.length>100?fval.substring(0,100)+"...":fval)+'</span>'+hint:'<em style="color:var(--text-secondary);font-size:12px;">empty</em>';
+      html+='<tr style="border-bottom:.5px solid var(--border);"><td style="padding:6px 10px;color:var(--text-secondary);font-family:monospace;font-size:11px;vertical-align:top;">'+idx+'</td><td style="padding:6px 10px;font-size:12px;font-weight:500;color:var(--text);vertical-align:top;">'+fname+'</td><td style="padding:6px 10px;vertical-align:top;">'+display+'</td></tr>';
     });
     html+='</tbody></table></div>';
   });
-
-  if(unknownSegs.length){
-    html+='<div style="margin-top:8px;padding:10px 12px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#633806;"><strong>Note:</strong> Segment'+(unknownSegs.length>1?'s':'')+' not recognised: '+[...new Set(unknownSegs)].join(", ")+'. These may be Z-segments (custom extensions) or less common standard segments. Raw field values are shown without explanations.</div>';
-  }
-
+  if(unknownSegs.length) html+='<div style="margin-top:8px;padding:10px 12px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#633806;"><strong>Note:</strong> Unrecognised segment(s): '+[...new Set(unknownSegs)].join(", ")+'. May be Z-segments or custom extensions.</div>';
   out.innerHTML=html;
 }
 
-function clearHL7(){
+function hl7Clear() {
   document.getElementById("hl7-input").value="";
-  document.getElementById("hl7-output").innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:10px;color:var(--text-secondary);font-size:14px;text-align:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Paste an HL7 message on the left<br>and click Decode</div>';
+  document.getElementById("hl7-output").innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:260px;color:var(--text-secondary);font-size:14px;text-align:center;">Paste an HL7 message on the left and click Decode</div>';
 }
-
-var hl7Timer;
-function autoDecodeHL7(){
-  clearTimeout(hl7Timer);
-  hl7Timer=setTimeout(function(){
-    var v=document.getElementById("hl7-input").value.trim();
-    if(v.startsWith("MSH")) decodeHL7();
-  },800);
-}
-window.decodeHL7=decodeHL7;
-window.clearHL7=clearHL7;
-window.autoDecodeHL7=autoDecodeHL7;
-})();
 </script>
 <!-- END HL7 DECODER -->
+
 
   <div class="footer">
     <span class="footer-note">HealthTechX AI Studio &copy; 2026 &mdash; Beginner's Guide to HL7 v2 &mdash; for educational purposes only</span>

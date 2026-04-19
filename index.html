@@ -240,30 +240,27 @@
   </div>
 
   
+
 <!-- FHIR DECODER SECTION -->
 <div style="margin-top:2.5rem;">
   <div style="border-top:.5px solid var(--border);padding-top:2rem;margin-bottom:1.5rem;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <span style="font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;letter-spacing:.03em;">Try it yourself</span>
-      <span style="font-size:13px;padding:4px 12px;border-radius:20px;background:#f7f6f3;color:var(--text-secondary);border:.5px solid var(--border);">FHIR Decoder</span>
+      <span style="font-size:13px;font-weight:600;padding:4px 12px;border-radius:20px;background:#E1F5EE;color:#085041;">Try it yourself</span>
+      <span style="font-size:13px;padding:4px 12px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:.5px solid var(--border);">FHIR Decoder</span>
     </div>
-    <h2 style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.01em;">Paste any FHIR message</h2>
-    <p style="font-size:15px;color:var(--text-secondary);line-height:1.65;max-width:600px;">Paste a FHIR R4 JSON resource below and get a plain-English field-by-field explanation instantly — no account needed.</p>
+    <h2 style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:6px;">Paste any FHIR message</h2>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.65;max-width:600px;">Paste a FHIR R4 JSON resource below and get a plain-English field-by-field explanation instantly.</p>
   </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="fhir-decoder-grid">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
     <div>
       <div style="border:.5px solid var(--border);border-radius:12px;overflow:hidden;">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg-secondary);border-bottom:.5px solid var(--border);">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;"></div>
-            <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Paste FHIR JSON here</span>
-          </div>
-          <button onclick="clearFhir()" style="font-size:11px;color:var(--text-secondary);background:none;border:.5px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;">Clear</button>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;"></div><span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Paste FHIR JSON here</span></div>
+          <button onclick="fhirClear()" style="font-size:11px;color:var(--text-secondary);background:none;border:.5px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;">Clear</button>
         </div>
         <div style="padding:12px;">
-          <textarea id="fhir-input" placeholder='Paste a FHIR resource here, e.g.&#10;{&#10;  "resourceType": "Patient",&#10;  "id": "pat-001",&#10;  "name": [{"family": "Smith", "given": ["John"]}],&#10;  "gender": "male",&#10;  "birthDate": "1980-06-15"&#10;}' style="width:100%;min-height:260px;resize:vertical;font-family:monospace;font-size:13px;line-height:1.7;background:var(--bg);color:var(--text);border:.5px solid var(--border);border-radius:8px;padding:12px;box-sizing:border-box;" oninput="autoDecodeFhir()"></textarea>
-          <button onclick="decodeFhir()" style="margin-top:10px;width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.01em;">Decode →</button>
+          <textarea id="fhir-input" placeholder='{ "resourceType": "Patient", ... }' style="width:100%;min-height:260px;resize:vertical;font-family:monospace;font-size:13px;line-height:1.7;background:var(--bg);color:var(--text);border:.5px solid var(--border);border-radius:8px;padding:12px;box-sizing:border-box;"></textarea>
+          <button onclick="fhirDecode()" style="margin-top:10px;width:100%;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;">Decode &rarr;</button>
         </div>
       </div>
     </div>
@@ -273,391 +270,100 @@
           <div style="width:8px;height:8px;border-radius:50%;background:#BA7517;"></div>
           <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.07em;">Plain English explanation</span>
         </div>
-        <div id="fhir-output" style="padding:14px;overflow-y:auto;max-height:400px;">
+        <div id="fhir-output" style="padding:14px;overflow-y:auto;max-height:420px;">
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:10px;color:var(--text-secondary);font-size:14px;text-align:center;">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Paste a FHIR resource on the left<br>and click Decode
+            Paste a FHIR resource on the left and click Decode
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;padding:10px 14px;background:var(--bg-secondary);border-radius:8px;border:.5px solid var(--border);line-height:1.6;">
-    <strong style="color:var(--text);">Learning tool notice:</strong> This decoder is designed for standard HL7 FHIR R4 resources used in education. Highly customised profiles, extensions, or proprietary implementations may not be fully recognised. For production validation, use <a href="https://inferno.healthit.gov" target="_blank" style="color:#185FA5;">Inferno</a> or <a href="https://simplifier.net" target="_blank" style="color:#185FA5;">Simplifier</a>.
+    <strong style="color:var(--text);">Learning tool notice:</strong> Built for standard HL7 FHIR R4 resources used in education. Highly customised profiles or proprietary implementations may not be fully recognised. For production validation use <a href="https://inferno.healthit.gov" target="_blank" style="color:#185FA5;">Inferno</a> or <a href="https://simplifier.net" target="_blank" style="color:#185FA5;">Simplifier</a>.
   </p>
 </div>
-
-<style>
-@media(max-width:620px){#fhir-decoder-grid{grid-template-columns:1fr!important;}}
-</style>
-
 <script>
-(function(){
-const FHIR_DEFS = {
-  Patient:{
-    label:"Patient",color:"#1D9E75",bg:"#E1F5EE",
-    summary:function(r){
-      var name=r.name&&r.name[0]?(r.name[0].given||[]).join(" ")+" "+(r.name[0].family||""):"Unknown";
-      return "Patient record for <strong>"+name.trim()+"</strong>"+(r.birthDate?" born "+r.birthDate:"")+(r.gender?", "+r.gender:"")+"."
-    },
-    fields:{
-      id:"Unique identifier for this patient within the FHIR server.",
-      "meta.profile":"Declares which FHIR profile this resource conforms to — useful for validation.",
-      identifier:"External identifiers (e.g. Medical Record Number, NHS Number). Each has a system URI and a value.",
-      name:"Patient name(s). 'family' = surname, 'given' = first/middle names. Multiple entries for aliases or name changes.",
-      telecom:"Contact details — phone, email, fax. 'system' says what type, 'value' is the number/address, 'use' says home/work/mobile.",
-      gender:"Administrative sex: male, female, other, unknown. Used for reference ranges and clinical decision support.",
-      birthDate:"Date of birth in YYYY-MM-DD format. Used to calculate age for dosing, screening, and billing.",
-      address:"Patient address. 'line' = street, 'city', 'state', 'postalCode', 'country'. 'use' = home/work/temp.",
-      maritalStatus:"Coded marital status using HL7 v3 vocabulary (M=Married, S=Single, D=Divorced, W=Widowed).",
-      contact:"Emergency contacts or next of kin — includes relationship, name, and phone.",
-      communication:"Languages spoken by the patient and whether they are the preferred language.",
-      generalPractitioner:"Reference to the patient's GP or primary care provider.",
-      managingOrganization:"The organisation responsible for maintaining this patient record.",
-      active:"Whether this patient record is in active use. false = merged, deceased, or error record.",
-      deceasedBoolean:"Whether the patient has died.",
-      deceasedDateTime:"Date and time of death if known.",
-      multipleBirthBoolean:"Whether the patient is part of a multiple birth.",
-      multipleBirthInteger:"Birth order in a multiple birth (1 = first born).",
-    }
-  },
-  MedicationRequest:{
-    label:"Prescription / Medication Order",color:"#1D9E75",bg:"#E1F5EE",
-    summary:function(r){
-      var med=(r.medicationCodeableConcept&&r.medicationCodeableConcept.text)||
-              (r.medicationCodeableConcept&&r.medicationCodeableConcept.coding&&r.medicationCodeableConcept.coding[0]&&r.medicationCodeableConcept.coding[0].display)||
-              (r.medicationReference&&r.medicationReference.display)||"a medication";
-      return "Prescription order for <strong>"+med+"</strong>. Status: "+(r.status||"unknown")+", Intent: "+(r.intent||"unknown")+".";
-    },
-    fields:{
-      id:"Unique identifier for this prescription within the FHIR server.",
-      status:"Lifecycle state: active (valid now), completed, cancelled, on-hold, entered-in-error, draft, stopped.",
-      intent:"Why this was created: order (definitive), proposal (suggested), plan (intended), instance-order (protocol).",
-      medicationCodeableConcept:"The medication, coded using RxNorm (US) or SNOMED CT. Includes code, display name, and coding system URI.",
-      medicationReference:"Alternative to medicationCodeableConcept — a reference to a separate Medication resource.",
-      subject:"Reference to the Patient this prescription is for.",
-      encounter:"Reference to the Encounter (clinical visit) during which this was prescribed.",
-      authoredOn:"Date and time the prescription was written.",
-      requester:"The clinician (Practitioner) who authorised the prescription.",
-      reasonCode:"Clinical reason for prescribing — typically a SNOMED CT or ICD-10 diagnosis code.",
-      reasonReference:"Reference to a Condition or Observation that explains why this was prescribed.",
-      dosageInstruction:"How to take the medication: timing (frequency), route, dose quantity. Structured for machine readability.",
-      "dosageInstruction.timing":"When to take it — frequency and period encoded mathematically (e.g. 2 times per day = frequency:2, period:1, periodUnit:'d').",
-      "dosageInstruction.route":"Route of administration coded with SNOMED CT (e.g. oral, IV, topical).",
-      "dosageInstruction.doseAndRate":"Dose amount using UCUM units (mg, ml, etc) to prevent unit ambiguity.",
-      dispenseRequest:"Dispensing instructions: quantity to dispense, number of refills allowed, validity period.",
-      "dispenseRequest.numberOfRepeatsAllowed":"How many refills (repeats) are permitted after the initial dispense.",
-      "dispenseRequest.quantity":"Amount to dispense per fill — should align with dosage duration.",
-      substitution:"Whether a generic substitution is allowed (allowed:true/false).",
-      note:"Free-text notes for the pharmacist or patient — use structured fields where possible.",
-    }
-  },
-  Observation:{
-    label:"Clinical Observation / Lab Result",color:"#185FA5",bg:"#E6F1FB",
-    summary:function(r){
-      var obs=(r.code&&r.code.text)||(r.code&&r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)||"an observation";
-      var val=r.valueQuantity?(r.valueQuantity.value+" "+(r.valueQuantity.unit||"")):(r.valueString||r.valueCodeableConcept&&(r.valueCodeableConcept.text||r.valueCodeableConcept.coding&&r.valueCodeableConcept.coding[0]&&r.valueCodeableConcept.coding[0].display)||"");
-      return "Observation: <strong>"+obs+"</strong>"+(val?" = <strong>"+val+"</strong>":"")+(". Status: "+(r.status||"unknown"))+".";
-    },
-    fields:{
-      id:"Unique identifier for this observation.",
-      status:"Result lifecycle: registered, preliminary, final, amended, corrected, cancelled, entered-in-error.",
-      category:"Broad category: laboratory, vital-signs, imaging, social-history, survey, exam, therapy, activity.",
-      code:"What was observed — typically LOINC code + display name. LOINC is the global standard for lab and clinical observations.",
-      subject:"Reference to the Patient this observation belongs to.",
-      encounter:"The Encounter during which this observation was made.",
-      effectiveDateTime:"When the observation was made (specimen collection time for labs).",
-      effectivePeriod:"Period over which the observation was made (e.g. 24-hour urine collection).",
-      issued:"When the result was made available (often differs from effectiveDateTime for lab results).",
-      performer:"Who performed the observation — Practitioner, Organization, or lab.",
-      valueQuantity:"Numerical result with UCUM unit (e.g. 7.4 mmol/L). UCUM prevents unit ambiguity.",
-      valueCodeableConcept:"Coded result for non-numerical observations (e.g. Positive/Negative).",
-      valueString:"Free-text result — use coded values where possible.",
-      valueBoolean:"True/false result.",
-      dataAbsentReason:"Why the result is missing: unknown, asked-but-unknown, not-performed, error.",
-      interpretation:"Clinical interpretation: Normal (N), High (H), Low (L), Critical High (HH), Critical Low (LL).",
-      note:"Free-text comment from the performing clinician or lab.",
-      bodySite:"Anatomical location coded with SNOMED CT.",
-      method:"Measurement method coded with SNOMED CT.",
-      referenceRange:"Normal range for this observation. 'low' and 'high' use same UCUM units as the value.",
-      component:"For multi-component observations (e.g. blood pressure: systolic + diastolic as separate components).",
-    }
-  },
-  Condition:{
-    label:"Diagnosis / Condition",color:"#BA7517",bg:"#FAEEDA",
-    summary:function(r){
-      var cond=(r.code&&r.code.text)||(r.code&&r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)||"a condition";
-      return "Clinical condition: <strong>"+cond+"</strong>. Status: "+(r.clinicalStatus&&r.clinicalStatus.coding&&r.clinicalStatus.coding[0]&&r.clinicalStatus.coding[0].code||r.clinicalStatus||"unknown")+".";
-    },
-    fields:{
-      id:"Unique identifier for this condition record.",
-      clinicalStatus:"Current clinical state: active, recurrence, relapse, inactive, remission, resolved.",
-      verificationStatus:"Confidence level: unconfirmed, provisional, differential, confirmed, refuted, entered-in-error.",
-      category:"Type of condition: problem-list-item (chronic/ongoing), encounter-diagnosis (this visit), health-concern.",
-      severity:"Coded severity: mild, moderate, severe — using SNOMED CT.",
-      code:"The diagnosis — typically SNOMED CT or ICD-10-CM code with display name.",
-      bodySite:"Anatomical location coded with SNOMED CT.",
-      subject:"Reference to the Patient this condition belongs to.",
-      encounter:"The Encounter during which this condition was recorded.",
-      onsetDateTime:"When the condition first appeared.",
-      onsetAge:"Age at onset if exact date is unknown.",
-      abatementDateTime:"When the condition resolved.",
-      recordedDate:"When this condition was recorded in the system.",
-      recorder:"Who recorded the condition (Practitioner).",
-      asserter:"Who asserts this condition — may differ from recorder.",
-      note:"Free-text clinical notes about this condition.",
-      evidence:"Supporting observations or references that confirm this condition.",
-    }
-  },
-  Encounter:{
-    label:"Clinical Encounter / Visit",color:"#533AB7",bg:"#EEEDFE",
-    summary:function(r){
-      var type=(r.type&&r.type[0]&&r.type[0].text)||(r.type&&r.type[0]&&r.type[0].coding&&r.type[0].coding[0]&&r.type[0].coding[0].display)||"encounter";
-      return "Clinical encounter: <strong>"+type+"</strong>. Class: "+(r.class&&(r.class.display||r.class.code)||"unknown")+". Status: "+(r.status||"unknown")+".";
-    },
-    fields:{
-      id:"Unique identifier for this encounter.",
-      status:"Encounter lifecycle: planned, arrived, triaged, in-progress, on-leave, finished, cancelled.",
-      "class":"Encounter class: AMB (ambulatory/outpatient), IMP (inpatient), EMER (emergency), HH (home health).",
-      type:"Type of encounter coded with SNOMED CT (e.g. outpatient consultation, inpatient stay).",
-      serviceType:"Service type coded with SNOMED CT (e.g. cardiology, paediatrics).",
-      priority:"Clinical urgency: routine, urgent, ASAP, STAT.",
-      subject:"Reference to the Patient this encounter is for.",
-      basedOn:"Reference to the ServiceRequest that triggered this encounter.",
-      participant:"Who participated — includes type (role) and reference to Practitioner.",
-      period:"Start and end date/time of the encounter.",
-      length:"Duration of the encounter as a coded quantity.",
-      reasonCode:"Why the patient presented — coded diagnosis or complaint.",
-      diagnosis:"Conditions diagnosed during this encounter with a rank (primary=1).",
-      account:"Billing account reference.",
-      hospitalization:"For inpatient stays: admission source, discharge disposition, re-admission flag.",
-      location:"Where the encounter took place — reference to Location resource with period.",
-      serviceProvider:"Organisation responsible for providing the service.",
-    }
-  },
-  DiagnosticReport:{
-    label:"Diagnostic Report",color:"#993C1D",bg:"#FAECE7",
-    summary:function(r){
-      var name=(r.code&&r.code.text)||(r.code&&r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)||"diagnostic report";
-      return "Diagnostic report: <strong>"+name+"</strong>. Status: "+(r.status||"unknown")+".";
-    },
-    fields:{
-      id:"Unique identifier for this report.",
-      status:"Report lifecycle: registered, partial, preliminary, final, amended, corrected, appended, cancelled.",
-      category:"Report category: LAB, RAD (radiology), PAT (pathology), etc.",
-      code:"What was reported — LOINC panel code (e.g. 58410-2 = CBC with differential).",
-      subject:"Reference to the Patient this report is for.",
-      encounter:"The Encounter during which this report was generated.",
-      effectiveDateTime:"Clinically relevant time — specimen collection for labs, examination time for radiology.",
-      issued:"When the report was released to clinicians.",
-      performer:"Who generated the report (lab, radiologist, pathologist).",
-      resultsInterpreter:"Who interpreted the results (may differ from performer).",
-      specimen:"Reference to the Specimen resource (sample details).",
-      result:"References to individual Observation resources that make up this report.",
-      imagingStudy:"References to associated imaging studies.",
-      media:"Attached images or diagrams (key images from radiology).",
-      conclusion:"Free-text summary conclusion — the narrative finding.",
-      conclusionCode:"Coded conclusion using SNOMED CT.",
-      presentedForm:"The report as a document attachment (PDF, HTML) for human display.",
-    }
-  },
-  Bundle:{
-    label:"FHIR Bundle (collection of resources)",color:"#085041",bg:"#E1F5EE",
-    summary:function(r){
-      var count=(r.entry&&r.entry.length)||0;
-      return "FHIR Bundle of type <strong>"+(r.type||"unknown")+"</strong> containing <strong>"+count+" resource"+(count!==1?"s":"")+"</strong>.";
-    },
-    fields:{
-      id:"Unique identifier for this bundle.",
-      type:"Bundle type: transaction (atomic group), collection (simple grouping), searchset (search results), document (clinical document), message (messaging), batch.",
-      total:"For searchsets — total number of matching resources.",
-      link:"Navigation links: self (current URL), next/previous for pagination.",
-      entry:"The contained resources. Each entry has 'resource' (the actual FHIR resource) and optionally 'request'/'response' for transactions.",
-      "entry.fullUrl":"Absolute or relative URI identifying this entry within the bundle.",
-      "entry.resource":"The actual FHIR resource (Patient, Observation, etc) — same structure as a standalone resource.",
-      "entry.request":"For transaction/batch bundles: HTTP method (GET/POST/PUT/DELETE) and URL.",
-      "entry.response":"For transaction/batch response bundles: HTTP status and outcome.",
-      signature:"Digital signature over the bundle content for document bundles.",
-      timestamp:"When this bundle was assembled.",
-    }
-  },
-  AllergyIntolerance:{
-    label:"Allergy / Intolerance",color:"#A32D2D",bg:"#FCEBEB",
-    summary:function(r){
-      var sub=(r.code&&r.code.text)||(r.code&&r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)||"substance";
-      return "Allergy/intolerance to <strong>"+sub+"</strong>. Criticality: "+(r.criticality||"unknown")+".";
-    },
-    fields:{
-      id:"Unique identifier.",
-      clinicalStatus:"Current status: active, inactive, resolved.",
-      verificationStatus:"Confidence: unconfirmed, confirmed, refuted, entered-in-error.",
-      type:"allergy (immune-mediated) or intolerance (non-immune). Important clinical distinction.",
-      category:"What category: food, medication, environment, biologic.",
-      criticality:"Potential severity: low (mild), high (life-threatening), unable-to-assess.",
-      code:"The substance using SNOMED CT or RxNorm.",
-      patient:"Reference to the Patient.",
-      recordedDate:"When this allergy was first recorded.",
-      recorder:"Who recorded it.",
-      asserter:"Who asserts the patient has this allergy.",
-      note:"Free-text clinical notes.",
-      reaction:"Documented reactions: manifestation (SNOMED coded symptom), severity (mild/moderate/severe), onset.",
-    }
-  },
-  Immunization:{
-    label:"Immunization Record",color:"#0F6E56",bg:"#E1F5EE",
-    summary:function(r){
-      var vax=(r.vaccineCode&&r.vaccineCode.text)||(r.vaccineCode&&r.vaccineCode.coding&&r.vaccineCode.coding[0]&&r.vaccineCode.coding[0].display)||"vaccine";
-      return "Immunization: <strong>"+vax+"</strong>. Status: "+(r.status||"unknown")+(r.occurrenceDateTime?" on "+r.occurrenceDateTime:"")+".";
-    },
-    fields:{
-      id:"Unique identifier.",
-      status:"completed, entered-in-error, not-done.",
-      statusReason:"Why the immunization was not given (if not-done).",
-      vaccineCode:"The vaccine administered — CVX code (US) or SNOMED CT.",
-      patient:"Reference to the Patient.",
-      encounter:"The Encounter during which this was given.",
-      occurrenceDateTime:"When the vaccine was administered.",
-      recorded:"When this record was created.",
-      primarySource:"Whether this is from the administering provider (true) or a secondary source.",
-      manufacturer:"Vaccine manufacturer.",
-      lotNumber:"Lot/batch number for traceability.",
-      expirationDate:"Expiry date of the vaccine lot.",
-      site:"Anatomical site of administration (SNOMED CT).",
-      route:"Route: IM, subcutaneous, oral, intranasal (SNOMED CT).",
-      doseQuantity:"Dose administered in UCUM units.",
-      performer:"Who administered the vaccine.",
-      note:"Free-text notes.",
-      reasonCode:"Why this immunization was given.",
-      protocolApplied:"Vaccination schedule — dose number in series, series name.",
-    }
-  },
-  Practitioner:{
-    label:"Clinician / Practitioner",color:"#185FA5",bg:"#E6F1FB",
-    summary:function(r){
-      var name=r.name&&r.name[0]?(r.name[0].prefix||[]).join(" ")+" "+(r.name[0].given||[]).join(" ")+" "+(r.name[0].family||""):"Unknown";
-      return "Practitioner record for <strong>"+name.trim()+"</strong>.";
-    },
-    fields:{
-      id:"Unique identifier.",
-      identifier:"Professional identifiers — NPI (US), GMC number (UK), etc. Each has a system URI and value.",
-      active:"Whether this practitioner record is currently active.",
-      name:"Practitioner name — prefix (Dr/Prof), given, family. HumanName datatype.",
-      telecom:"Contact details — work phone, direct email.",
-      address:"Professional address.",
-      gender:"Administrative gender.",
-      birthDate:"Date of birth.",
-      photo:"Profile photo.",
-      qualification:"Professional qualifications — degree, licence, specialty. Each has a code, issuer, and validity period.",
-      communication:"Languages spoken in a clinical context.",
-    }
-  },
+var FHIR_DEFS = {
+  Patient:{label:"Patient",color:"#1D9E75",bg:"#E1F5EE",
+    summary:function(r){var n=r.name&&r.name[0]?(r.name[0].given||[]).join(" ")+" "+(r.name[0].family||""):"Unknown";return "Patient record for <strong>"+n.trim()+"</strong>"+(r.birthDate?" born "+r.birthDate:"")+(r.gender?", "+r.gender:"")+".";}
+    ,fields:{id:"Unique identifier for this patient within the FHIR server.",identifier:"External IDs e.g. Medical Record Number, NHS Number. Each has a system URI and a value.",name:"Patient name(s). family = surname, given = first/middle names.",telecom:"Contact details — phone, email, fax. system says type, value is the number/address, use says home/work/mobile.",gender:"Administrative sex: male, female, other, unknown. Affects reference ranges and clinical decision support.",birthDate:"Date of birth in YYYY-MM-DD format.",address:"Patient address — line, city, state, postalCode, country.",maritalStatus:"Coded marital status (M=Married, S=Single, D=Divorced, W=Widowed).",contact:"Emergency contacts or next of kin.",communication:"Languages spoken and whether preferred.",generalPractitioner:"Reference to the patient's primary care provider.",active:"Whether this patient record is in active use.",deceasedBoolean:"Whether the patient has died.",deceasedDateTime:"Date and time of death.",multipleBirthBoolean:"Whether part of a multiple birth.",multipleBirthInteger:"Birth order in a multiple birth."}},
+  MedicationRequest:{label:"Prescription / Medication Order",color:"#1D9E75",bg:"#E1F5EE",
+    summary:function(r){var m=(r.medicationCodeableConcept&&(r.medicationCodeableConcept.text||(r.medicationCodeableConcept.coding&&r.medicationCodeableConcept.coding[0]&&r.medicationCodeableConcept.coding[0].display)))||"a medication";return "Prescription for <strong>"+m+"</strong>. Status: "+(r.status||"unknown")+", Intent: "+(r.intent||"unknown")+".";}
+    ,fields:{id:"Unique prescription identifier.",status:"Lifecycle: active, completed, cancelled, on-hold, entered-in-error, draft, stopped.",intent:"Why created: order (definitive), proposal (suggested), plan (intended).",medicationCodeableConcept:"The medication coded using RxNorm or SNOMED CT.",subject:"Reference to the Patient this is for.",authoredOn:"Date/time the prescription was written.",requester:"The clinician who authorised it.",reasonCode:"Clinical reason — SNOMED CT or ICD-10 code.",dosageInstruction:"How to take it: timing, route, dose quantity — fully structured.",dispenseRequest:"Dispensing instructions: quantity and number of refills.",substitution:"Whether a generic substitution is allowed."}},
+  Observation:{label:"Clinical Observation / Lab Result",color:"#185FA5",bg:"#E6F1FB",
+    summary:function(r){var o=(r.code&&(r.code.text||(r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)))||"observation";var v=r.valueQuantity?r.valueQuantity.value+" "+(r.valueQuantity.unit||""):(r.valueString||"");return "Observation: <strong>"+o+"</strong>"+(v?" = <strong>"+v+"</strong>":"")+" Status: "+(r.status||"unknown")+".";}
+    ,fields:{id:"Unique identifier.",status:"Result lifecycle: registered, preliminary, final, amended, corrected, cancelled.",category:"Broad category: laboratory, vital-signs, imaging, social-history.",code:"What was observed — LOINC code and display name.",subject:"Reference to the Patient.",effectiveDateTime:"When the observation was made.",issued:"When the result was made available.",performer:"Who performed the observation.",valueQuantity:"Numerical result with UCUM unit (e.g. 7.4 mmol/L).",valueCodeableConcept:"Coded result for non-numerical observations.",valueString:"Free-text result.",interpretation:"Clinical interpretation: Normal (N), High (H), Low (L), Critical High (HH).",note:"Free-text comment from the clinician or lab.",referenceRange:"Normal range with low and high bounds in the same UCUM unit.",component:"For multi-component results e.g. blood pressure with systolic and diastolic."}},
+  Condition:{label:"Diagnosis / Condition",color:"#BA7517",bg:"#FAEEDA",
+    summary:function(r){var c=(r.code&&(r.code.text||(r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)))||"a condition";return "Condition: <strong>"+c+"</strong>. Status: "+(r.clinicalStatus&&r.clinicalStatus.coding&&r.clinicalStatus.coding[0]&&r.clinicalStatus.coding[0].code||"unknown")+".";}
+    ,fields:{id:"Unique identifier.",clinicalStatus:"Clinical state: active, recurrence, relapse, inactive, remission, resolved.",verificationStatus:"Confidence: unconfirmed, provisional, confirmed, refuted.",category:"Type: problem-list-item (ongoing), encounter-diagnosis (this visit).",code:"The diagnosis — SNOMED CT or ICD-10-CM code.",subject:"Reference to the Patient.",onsetDateTime:"When the condition first appeared.",abatementDateTime:"When the condition resolved.",recordedDate:"When recorded in the system.",note:"Free-text clinical notes."}},
+  Encounter:{label:"Clinical Encounter / Visit",color:"#533AB7",bg:"#EEEDFE",
+    summary:function(r){var t=(r.type&&r.type[0]&&(r.type[0].text||(r.type[0].coding&&r.type[0].coding[0]&&r.type[0].coding[0].display)))||"encounter";return "Encounter: <strong>"+t+"</strong>. Class: "+(r.class&&(r.class.display||r.class.code)||"unknown")+". Status: "+(r.status||"unknown")+".";}
+    ,fields:{id:"Unique encounter identifier.",status:"Lifecycle: planned, arrived, in-progress, finished, cancelled.",class:"AMB (outpatient), IMP (inpatient), EMER (emergency), HH (home health).",type:"Type coded with SNOMED CT.",subject:"Reference to the Patient.",period:"Start and end date/time.",reasonCode:"Why the patient presented.",diagnosis:"Conditions diagnosed during this encounter.",hospitalization:"Inpatient details: admission source, discharge disposition.",location:"Where the encounter took place."}},
+  DiagnosticReport:{label:"Diagnostic Report",color:"#993C1D",bg:"#FAECE7",
+    summary:function(r){var n=(r.code&&(r.code.text||(r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)))||"report";return "Diagnostic report: <strong>"+n+"</strong>. Status: "+(r.status||"unknown")+".";}
+    ,fields:{id:"Unique report identifier.",status:"Report lifecycle: registered, partial, preliminary, final, amended.",category:"Report category: LAB, RAD (radiology), PAT (pathology).",code:"What was reported — LOINC panel code.",subject:"Reference to the Patient.",effectiveDateTime:"Clinically relevant time — specimen collection for labs.",issued:"When the report was released.",performer:"Who generated the report.",result:"References to individual Observation resources.",conclusion:"Free-text narrative finding.",presentedForm:"The report as a PDF or HTML attachment."}},
+  Bundle:{label:"FHIR Bundle",color:"#085041",bg:"#E1F5EE",
+    summary:function(r){var c=(r.entry&&r.entry.length)||0;return "FHIR Bundle type <strong>"+(r.type||"unknown")+"</strong> with <strong>"+c+" resource"+(c!==1?"s":"")+"</strong>.";}
+    ,fields:{id:"Unique bundle identifier.",type:"transaction, collection, searchset, document, message, batch.",total:"For searchsets — total matching resources.",entry:"The contained resources — each has a resource, fullUrl, and optionally request/response.",timestamp:"When this bundle was assembled."}},
+  AllergyIntolerance:{label:"Allergy / Intolerance",color:"#A32D2D",bg:"#FCEBEB",
+    summary:function(r){var s=(r.code&&(r.code.text||(r.code.coding&&r.code.coding[0]&&r.code.coding[0].display)))||"substance";return "Allergy to <strong>"+s+"</strong>. Criticality: "+(r.criticality||"unknown")+".";}
+    ,fields:{id:"Unique identifier.",clinicalStatus:"Active, inactive, or resolved.",verificationStatus:"Unconfirmed, confirmed, refuted.",type:"allergy (immune-mediated) vs intolerance (non-immune).",category:"food, medication, environment, biologic.",criticality:"low (mild) or high (life-threatening).",code:"The substance — SNOMED CT or RxNorm.",patient:"Reference to the Patient.",reaction:"Documented reactions with SNOMED coded manifestation and severity."}},
+  Immunization:{label:"Immunization Record",color:"#0F6E56",bg:"#E1F5EE",
+    summary:function(r){var v=(r.vaccineCode&&(r.vaccineCode.text||(r.vaccineCode.coding&&r.vaccineCode.coding[0]&&r.vaccineCode.coding[0].display)))||"vaccine";return "Immunization: <strong>"+v+"</strong>. Status: "+(r.status||"unknown")+".";}
+    ,fields:{id:"Unique identifier.",status:"completed, entered-in-error, not-done.",vaccineCode:"The vaccine — CVX code (US) or SNOMED CT.",patient:"Reference to the Patient.",occurrenceDateTime:"When administered.",lotNumber:"Lot/batch number for traceability.",route:"Route: IM, subcutaneous, oral (SNOMED CT).",doseQuantity:"Dose in UCUM units.",protocolApplied:"Vaccination schedule — dose number in series."}},
+  Practitioner:{label:"Clinician / Practitioner",color:"#185FA5",bg:"#E6F1FB",
+    summary:function(r){var n=r.name&&r.name[0]?(r.name[0].prefix||[]).join(" ")+" "+(r.name[0].given||[]).join(" ")+" "+(r.name[0].family||""):"Unknown";return "Practitioner: <strong>"+n.trim()+"</strong>.";}
+    ,fields:{id:"Unique identifier.",identifier:"Professional IDs — NPI (US), GMC (UK).",active:"Whether this record is active.",name:"Name with prefix (Dr/Prof), given, family.",telecom:"Work phone and email.",qualification:"Qualifications — degree, licence, specialty with validity period.",communication:"Languages spoken clinically."}}
 };
 
-function getFhirDef(resourceType){return FHIR_DEFS[resourceType]||null;}
-
-function flattenForExplanation(obj, prefix, results, depth){
-  if(depth>3) return;
-  prefix=prefix||""; results=results||[]; depth=depth||0;
-  for(var k in obj){
-    if(!obj.hasOwnProperty(k)) continue;
-    var fullKey=prefix?prefix+"."+k:k;
-    var val=obj[k];
-    results.push({key:fullKey, val:val});
-    if(val&&typeof val==="object"&&!Array.isArray(val)&&depth<2){
-      flattenForExplanation(val, fullKey, results, depth+1);
-    }
-  }
-  return results;
-}
-
-function fmtVal(v){
+function fhirFmtVal(v) {
   if(v===null||v===undefined) return '<em style="color:var(--text-secondary)">null</em>';
   if(typeof v==="boolean") return '<span style="color:#993C1D;">'+v+'</span>';
   if(typeof v==="number") return '<span style="color:#BA7517;">'+v+'</span>';
-  if(typeof v==="string") return '<span style="color:#185FA5;word-break:break-all;">'+v.substring(0,120)+(v.length>120?"…":"")+'</span>';
+  if(typeof v==="string") return '<span style="color:#185FA5;word-break:break-all;">'+(v.length>120?v.substring(0,120)+"...":v)+'</span>';
   if(Array.isArray(v)) return '<span style="color:var(--text-secondary);">['+v.length+' item'+(v.length!==1?'s':'')+']</span>';
   return '<span style="color:var(--text-secondary);">{object}</span>';
 }
 
-function decodeFhir(){
-  var raw=document.getElementById("fhir-input").value.trim();
-  var out=document.getElementById("fhir-output");
-  if(!raw){
-    out.innerHTML='<div style="padding:20px;color:var(--text-secondary);font-size:14px;">Please paste a FHIR resource first.</div>';
-    return;
-  }
+function fhirDecode() {
+  var raw = document.getElementById("fhir-input").value.trim();
+  var out = document.getElementById("fhir-output");
+  if(!raw) { out.innerHTML='<div style="padding:20px;color:var(--text-secondary);">Please paste a FHIR resource first.</div>'; return; }
   var parsed;
-  try{ parsed=JSON.parse(raw); }
-  catch(e){
-    out.innerHTML='<div style="padding:14px;background:#FCEBEB;border-radius:8px;font-size:14px;color:#A32D2D;"><strong>Invalid JSON</strong> — '+e.message+'<br><br><span style="font-size:12px;">Make sure your FHIR resource is valid JSON. Check for missing commas, unclosed brackets, or unquoted keys.</span></div>';
-    return;
+  try { parsed = JSON.parse(raw); } catch(e) {
+    out.innerHTML='<div style="padding:14px;background:#FCEBEB;border-radius:8px;color:#A32D2D;font-size:14px;"><strong>Invalid JSON</strong> — '+e.message+'<br><small>Check for missing commas, unclosed brackets, or unquoted keys.</small></div>'; return;
   }
-  var rt=parsed.resourceType;
-  if(!rt){
-    out.innerHTML='<div style="padding:14px;background:#FAEEDA;border-radius:8px;font-size:14px;color:#633806;"><strong>Missing resourceType</strong> — Every FHIR resource must have a "resourceType" field as the first key. This tells the parser what kind of resource it is.</div>';
-    return;
-  }
-  var def=getFhirDef(rt);
-  var color=def?def.color:"#888";
-  var bg=def?def.bg:"#f7f6f3";
-  var label=def?def.label:rt;
-  var summary=def?def.summary(parsed):"Resource type: <strong>"+rt+"</strong>";
-
-  var knownFields=def?def.fields:{};
-  var topKeys=Object.keys(parsed).filter(function(k){return k!=="resourceType";});
-
-  var rows=topKeys.map(function(k){
-    var v=parsed[k];
-    var explanation=knownFields[k]||null;
-    // Try partial match
-    if(!explanation){
-      for(var fk in knownFields){
-        if(fk.split(".")[0]===k){explanation=knownFields[fk];break;}
-      }
-    }
+  var rt = parsed.resourceType;
+  if(!rt) { out.innerHTML='<div style="padding:14px;background:#FAEEDA;border-radius:8px;color:#633806;font-size:14px;"><strong>Missing resourceType</strong> — Every FHIR resource must have a "resourceType" field.</div>'; return; }
+  var def = FHIR_DEFS[rt];
+  var color = def?def.color:"#888";
+  var bg = def?def.bg:"#f7f6f3";
+  var label = def?def.label:rt;
+  var summary = def?def.summary(parsed):"Resource type: <strong>"+rt+"</strong>";
+  var knownFields = def?def.fields:{};
+  var topKeys = Object.keys(parsed).filter(function(k){return k!=="resourceType";});
+  var rows = topKeys.map(function(k){
+    var v = parsed[k];
+    var exp = knownFields[k];
+    if(!exp) { for(var fk in knownFields){ if(fk.split(".")[0]===k){exp=knownFields[fk];break;} } }
     return '<tr style="border-bottom:.5px solid var(--border);">'
       +'<td style="padding:8px 10px;font-family:monospace;font-size:13px;color:'+color+';white-space:nowrap;vertical-align:top;font-weight:600;">'+k+'</td>'
-      +'<td style="padding:8px 10px;font-size:13px;vertical-align:top;">'+fmtVal(v)+'</td>'
-      +'<td style="padding:8px 10px;font-size:13px;color:var(--text-secondary);line-height:1.6;vertical-align:top;">'+(explanation||'<em style="color:var(--text-secondary)">Extension or custom field — not in standard FHIR R4 base definition.</em>')+'</td>'
+      +'<td style="padding:8px 10px;font-size:13px;vertical-align:top;">'+fhirFmtVal(v)+'</td>'
+      +'<td style="padding:8px 10px;font-size:13px;color:var(--text-secondary);line-height:1.6;vertical-align:top;">'+(exp||'<em>Custom or extension field.</em>')+'</td>'
       +'</tr>';
   }).join("");
-
-  out.innerHTML=''
-    +'<div style="margin-bottom:14px;">'
-    +'<span style="display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:'+bg+';color:'+color+';margin-bottom:8px;">'+label+'</span>'
-    +'<div style="font-size:14px;color:var(--text);line-height:1.7;">'+summary+'</div>'
-    +'</div>'
-    +'<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-    +'<thead><tr style="border-bottom:.5px solid var(--border);">'
-    +'<th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;">Field</th>'
-    +'<th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">Value</th>'
-    +'<th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">What it means</th>'
-    +'</tr></thead>'
-    +'<tbody>'+rows+'</tbody>'
-    +'</table>'
-    +(def?'':'<div style="margin-top:12px;padding:10px 12px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#633806;"><strong>Note:</strong> "'+rt+'" is not in the standard resource library for this learning tool. Showing raw fields only. Supported resources: '+Object.keys(FHIR_DEFS).join(", ")+'.</div>');
+  out.innerHTML='<div style="margin-bottom:14px;"><span style="display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;background:'+bg+';color:'+color+';margin-bottom:8px;">'+label+'</span><div style="font-size:14px;line-height:1.7;">'+summary+'</div></div>'
+    +'<table style="width:100%;border-collapse:collapse;"><thead><tr style="border-bottom:.5px solid var(--border);"><th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">Field</th><th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">Value</th><th style="padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">What it means</th></tr></thead><tbody>'+rows+'</tbody></table>'
+    +(!def?'<div style="margin-top:12px;padding:10px;background:#FAEEDA;border-radius:8px;font-size:12px;color:#633806;"><strong>Note:</strong> "'+rt+'" is not in the standard library. Showing raw fields. Supported: '+Object.keys(FHIR_DEFS).join(", ")+'.</div>':'');
 }
 
-function clearFhir(){
+function fhirClear() {
   document.getElementById("fhir-input").value="";
-  document.getElementById("fhir-output").innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:260px;gap:10px;color:var(--text-secondary);font-size:14px;text-align:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Paste a FHIR resource on the left<br>and click Decode</div>';
+  document.getElementById("fhir-output").innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:260px;color:var(--text-secondary);font-size:14px;text-align:center;">Paste a FHIR resource on the left and click Decode</div>';
 }
-
-var fhirTimer;
-function autoDecodeFhir(){
-  clearTimeout(fhirTimer);
-  fhirTimer=setTimeout(function(){
-    var v=document.getElementById("fhir-input").value.trim();
-    if(v.startsWith("{")&&v.endsWith("}")) decodeFhir();
-  },800);
-}
-window.decodeFhir=decodeFhir;
-window.clearFhir=clearFhir;
-window.autoDecodeFhir=autoDecodeFhir;
-})();
 </script>
 <!-- END FHIR DECODER -->
+
 
   <div class="footer">
     <span class="footer-note">Built with HL7 FHIR R4 — for demonstration purposes only &mdash; healthtechx &copy; 2026</span>
