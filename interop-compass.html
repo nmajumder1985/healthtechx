@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interop Compass — HealthTechX Institute</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/6.6.6/css/flag-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08080f;--surface:#0e0e1a;--card:#13131f;--border:#1c1c2e;--border2:#252538;
+  --teal:#00c4cc;--teal-dim:#007a80;--amber:#f5a623;--green:#2dd4a0;
+  --purple:#7c6af0;--red:#f05a5a;--text:#dddde8;--sub:#7777a0;--faint:#333350;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-bottom:1px solid var(--border);background:rgba(8,8,15,.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(8px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;letter-spacing:.08em;color:var(--text);text-transform:uppercase;line-height:1.2}
+.nav-logo span{display:block;font-size:10px;font-weight:400;color:var(--sub);letter-spacing:.12em}
+.nav-links{display:flex;gap:24px}
+.nav-links a{font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--sub);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--teal)}
+.nav-badge{font-size:10px;font-weight:600;letter-spacing:.08em;padding:3px 8px;border-radius:3px;background:rgba(0,196,204,.12);color:var(--teal);border:1px solid rgba(0,196,204,.25);text-transform:uppercase}
+
+/* HERO */
+.hero{padding:56px 40px 40px;border-bottom:1px solid var(--border);max-width:920px;margin:0 auto}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,50px);font-weight:700;line-height:1.1;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:var(--amber)}
+.hero-desc{font-size:15px;color:var(--sub);max-width:620px;line-height:1.75;margin-bottom:28px}
+.hero-meta{display:flex;gap:28px;flex-wrap:wrap}
+.hero-meta-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub)}
+.hero-meta-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+
+/* TOOLTIPS */
+.tip{display:inline-flex;align-items:center;gap:3px;cursor:help;position:relative}
+.tip-icon{width:15px;height:15px;border-radius:50%;background:var(--border2);color:var(--sub);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--faint)}
+.tip-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1e1e30;border:1px solid var(--border2);border-radius:8px;padding:12px 14px;width:260px;font-size:12px;color:var(--text);line-height:1.6;z-index:200;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.tip:hover .tip-box,.tip:focus .tip-box{opacity:1}
+.tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1e1e30}
+
+/* MAIN */
+.main{max-width:920px;margin:0 auto;padding:44px 40px 80px}
+
+/* PROGRESS */
+.progress-bar{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.progress-track{flex:1;height:3px;background:var(--border2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--purple));border-radius:3px;transition:width .4s ease}
+.progress-label{font-size:12px;color:var(--sub);white-space:nowrap}
+
+/* QUESTION */
+.question-wrap{display:none}
+.question-wrap.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.q-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:10px}
+.q-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;line-height:1.25;margin-bottom:6px}
+.q-hint{font-size:14px;color:var(--sub);margin-bottom:28px;line-height:1.6}
+
+/* OPTIONS */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.options.cols1{grid-template-columns:1fr}
+.options.cols3{grid-template-columns:repeat(3,1fr)}
+.option{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:16px 18px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%}
+.option:hover{border-color:var(--teal-dim);background:rgba(0,196,204,.04)}
+.option.selected{border-color:var(--teal);background:rgba(0,196,204,.07)}
+.option-icon{width:34px;height:34px;border-radius:6px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.opt-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
+.opt-desc{font-size:12px;color:var(--sub);line-height:1.5}
+.option.selected .opt-title{color:var(--teal)}
+.option.selected .option-icon{background:rgba(0,196,204,.1)}
+
+/* JURISDICTION FLAGS */
+.fi{font-size:0!important}
+.jur-flag-img{
+  width:48px;height:32px;border-radius:4px;
+  object-fit:cover;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 8px;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.jur-flag-img .fi{
+  font-size:1px!important;
+  width:48px;height:32px;
+  background-size:cover!important;
+  background-position:center!important;
+  border-radius:4px;
+  display:block;
+}
+.globe-icon{
+  width:48px;height:32px;border-radius:4px;
+  background:linear-gradient(135deg,var(--teal-dim),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 8px;font-size:20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.jur-option.selected .jur-flag-img{box-shadow:0 0 0 2px var(--teal);}
+.jur-option.selected .globe-icon{box-shadow:0 0 0 2px var(--teal);}
+.jur-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.jur-option{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:14px 12px;cursor:pointer;transition:all .18s;text-align:center}
+.jur-option:hover{border-color:var(--teal-dim);background:rgba(0,196,204,.04)}
+.jur-option.selected{border-color:var(--teal);background:rgba(0,196,204,.08)}
+.jur-flag{font-size:24px;margin-bottom:6px}
+.jur-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.jur-sub{font-size:11px;color:var(--sub);margin-top:2px}
+.jur-option.selected .jur-name{color:var(--teal)}
+
+/* NAV BUTTONS */
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px}
+.btn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:.05em;padding:11px 26px;border-radius:6px;cursor:pointer;border:none;transition:all .18s;text-transform:uppercase}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--sub)}
+.btn-primary{background:var(--teal);color:#08080f}
+.btn-primary:hover{background:#00dae3}
+.btn-primary:disabled{background:var(--faint);color:var(--sub);cursor:not-allowed}
+.btn-amber{background:var(--amber);color:#08080f}
+.btn-amber:hover{background:#f7b84a}
+
+/* RESULTS */
+#results{display:none}
+#results.show{display:block;animation:fadeUp .4s ease}
+
+.plain-summary{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:28px 30px;margin-bottom:24px}
+.plain-summary-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:12px}
+.plain-summary-verdict{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;line-height:1.15;margin-bottom:10px}
+.plain-summary-text{font-size:15px;color:var(--sub);line-height:1.75}
+.plain-summary-text strong{color:var(--text)}
+
+.verdict-block{display:flex;align-items:center;gap:20px;padding:22px 28px;border-radius:10px;margin-bottom:20px}
+.verdict-hl7{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3)}
+.verdict-fhir{background:rgba(0,196,204,.08);border:1px solid rgba(0,196,204,.3)}
+.verdict-both{background:rgba(124,106,240,.08);border:1px solid rgba(124,106,240,.3)}
+.verdict-badge{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border-radius:3px}
+.badge-hl7{background:rgba(245,166,35,.2);color:var(--amber)}
+.badge-fhir{background:rgba(0,196,204,.2);color:var(--teal)}
+.badge-both{background:rgba(124,106,240,.2);color:var(--purple)}
+.verdict-std{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-top:6px}
+.verdict-hl7 .verdict-std{color:var(--amber)}
+.verdict-fhir .verdict-std{color:var(--teal)}
+.verdict-both .verdict-std{color:var(--purple)}
+.verdict-sub2{font-size:14px;color:var(--sub);margin-top:3px}
+.conf-block{text-align:right;flex-shrink:0}
+.conf-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--sub)}
+.conf-val{font-size:26px;font-weight:700;font-family:'DM Mono',monospace}
+.conf-high{color:var(--green)} .conf-med{color:var(--amber)} .conf-low{color:var(--red)}
+
+/* BRIEF GRID */
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.brief-card{background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:20px 22px}
+.brief-card.full{grid-column:1/-1}
+.card-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-label::before{content:'';width:14px;height:2px;border-radius:2px;flex-shrink:0}
+.lbl-teal::before{background:var(--teal)} .lbl-amber::before{background:var(--amber)}
+.lbl-green::before{background:var(--green)} .lbl-red::before{background:var(--red)}
+.lbl-purple::before{background:var(--purple)} .lbl-sub::before{background:var(--sub)}
+
+/* LISTS */
+.r-list{list-style:none}
+.r-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);line-height:1.65;padding:8px 0;border-bottom:1px solid var(--border)}
+.r-list li:last-child{border-bottom:none}
+.r-list li::before{content:'→';flex-shrink:0;margin-top:1px}
+.r-list.teal li::before{color:var(--teal)}
+.r-list.amber li::before{color:var(--amber)}
+.r-list.red li::before{color:var(--red)}
+.r-list.green li::before{color:var(--green)}
+.r-list.purple li::before{color:var(--purple)}
+
+/* SCORE BARS */
+.score-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.score-name{font-size:12px;font-weight:600;width:72px;flex-shrink:0}
+.score-track{flex:1;height:7px;background:var(--border2);border-radius:4px;overflow:hidden}
+.score-bar{height:100%;border-radius:4px;transition:width .7s ease}
+.bar-hl7{background:var(--amber)} .bar-fhir{background:var(--teal)}
+.score-num{font-family:'DM Mono',monospace;font-size:12px;color:var(--sub);width:28px;text-align:right}
+
+/* STEPS */
+.steps{list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);line-height:1.65}
+.steps li:last-child{border-bottom:none}
+.steps li::before{content:counter(s);flex-shrink:0;width:20px;height:20px;border-radius:50%;background:rgba(0,196,204,.15);color:var(--teal);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+
+/* JURISDICTION PANEL */
+.jur-panel{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:18px 20px;margin-top:2px}
+.jur-panel-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);margin-bottom:10px}
+.jur-reg-list{list-style:none}
+.jur-reg-list li{font-size:13px;color:var(--text);padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;line-height:1.5}
+.jur-reg-list li:last-child{border-bottom:none}
+.jur-reg-list li span{flex-shrink:0;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-top:2px}
+.reg-fhir{background:rgba(0,196,204,.15);color:var(--teal)}
+.reg-hl7{background:rgba(245,166,35,.15);color:var(--amber)}
+.reg-both{background:rgba(124,106,240,.15);color:var(--purple)}
+.reg-neutral{background:rgba(119,119,160,.15);color:var(--sub)}
+
+/* EVIDENCE PANEL */
+.evidence-panel{margin-top:20px}
+.evidence-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:14px 20px;background:var(--card);border:1px solid var(--border2);border-radius:8px;width:100%;text-align:left;transition:border-color .2s}
+.evidence-toggle:hover{border-color:var(--teal-dim)}
+.evidence-toggle-label{font-size:13px;font-weight:600;color:var(--text)}
+.evidence-toggle-sub{font-size:12px;color:var(--sub);margin-left:auto;margin-right:8px}
+.evidence-toggle-arrow{font-size:12px;color:var(--sub);transition:transform .2s}
+.evidence-toggle.open .evidence-toggle-arrow{transform:rotate(180deg)}
+.evidence-body{display:none;padding:20px;border:1px solid var(--border2);border-top:none;border-radius:0 0 8px 8px;background:var(--card)}
+.evidence-body.open{display:block}
+.evidence-disclaimer{font-size:13px;color:var(--amber);background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:6px;padding:12px 14px;margin-bottom:16px;line-height:1.6}
+.evidence-sources{list-style:none}
+.evidence-sources li{font-size:12px;color:var(--sub);padding:8px 0;border-bottom:1px solid var(--border);line-height:1.6}
+.evidence-sources li:last-child{border-bottom:none}
+.evidence-sources li strong{color:var(--text)}
+.evidence-sources a{color:var(--teal);text-decoration:none}
+.evidence-sources a:hover{text-decoration:underline}
+.version-tag{display:inline-block;font-size:10px;color:var(--sub);background:var(--border2);padding:2px 7px;border-radius:3px;margin-left:8px}
+
+/* COMPARE TABLE */
+.cmp-table{width:100%;border-collapse:collapse;font-size:12px}
+.cmp-table th{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border2)}
+.cmp-table th:first-child{color:var(--sub)}
+.cmp-table th.th-hl7{color:var(--amber)} .cmp-table th.th-fhir{color:var(--teal)}
+.cmp-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--sub)}
+.cmp-table td:first-child{font-weight:500;font-size:11px}
+.cmp-table td:not(:first-child){color:var(--text)}
+.cmp-table tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px}
+.pill-y{background:rgba(45,212,160,.15);color:var(--green)}
+.pill-n{background:rgba(240,90,90,.15);color:var(--red)}
+.pill-p{background:rgba(245,166,35,.15);color:var(--amber)}
+
+/* ACTIONS */
+.brief-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
+.reset-btn{font-size:12px;color:var(--sub);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit;transition:color .2s}
+.reset-btn:hover{color:var(--teal)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+footer span,.footer-links a{font-size:12px;color:var(--sub);text-decoration:none}
+.footer-links{display:flex;gap:20px}
+.footer-links a:hover{color:var(--teal)}
+
+@media(max-width:640px){
+  nav{padding:14px 20px} .hero,.main{padding-left:20px;padding-right:20px}
+  .options,.jur-grid{grid-template-columns:1fr} .brief-grid{grid-template-columns:1fr}
+  .brief-card.full{grid-column:auto} .options.cols3{grid-template-columns:1fr 1fr}
+}
+@media print{
+  nav,.progress-bar,.q-nav,.brief-actions,.evidence-toggle,footer{display:none!important}
+  #results{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="nav-logo">HealthTechX<span>Institute</span></div>
+    <div class="nav-badge">Interop Compass · v2</div>
+  </div>
+  <div class="nav-links">
+    <a href="https://nmajumder1985.github.io/healthtechx/hl7.html">HL7 Explorer</a>
+    <a href="https://nmajumder1985.github.io/healthtechx/index.html">FHIR Workbench</a>
+    <a class="active" href="#">Interop Compass</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Interop Compass · Global Interoperability Standard Selector</div>
+  <h1>HL7 or FHIR —<br><em>which one fits your situation?</em></h1>
+  <p class="hero-desc">Not sure whether you need HL7 or FHIR? You're not alone — this question confuses clinicians, product managers, and founders every day. Answer six plain-English questions and get a reasoned recommendation with supporting evidence. No jargon required.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div>6 questions · 3 minutes</div>
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div>Global — covers US, Canada, UK, Australia, UAE and more</div>
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div>Evidence cited from HL7 International, Firely, ONC, NHS and others</div>
+  </div>
+</div>
+
+<div class="main">
+<div class="progress-bar" id="progressBar">
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-label" id="progressLabel">Question 1 of 6</div>
+</div>
+
+<!-- ── Q1 ── -->
+<div class="question-wrap active" id="q1">
+  <div class="q-label">Question 1 of 6 — What are you trying to do?</div>
+  <div class="q-title">Pick the option that best describes the main job this connection needs to do.</div>
+  <div class="q-hint">Don't worry about getting this perfect — choose the closest fit. You can always start over.</div>
+  <div class="options">
+    <button class="option" onclick="pick(1,'events',this)">
+      <div class="option-icon">⚡</div>
+      <div>
+        <div class="opt-title">Send automatic alerts when something happens in care</div>
+        <div class="opt-desc">Like notifying a system when a patient is admitted, a test is ordered, or a lab result comes back — without anyone pressing a button</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(1,'patient',this)">
+      <div class="option-icon">📱</div>
+      <div>
+        <div class="opt-title">Power an app or website that patients use directly</div>
+        <div class="opt-desc">Patients or carers will log in to see their health records, book appointments, or share information with their care team</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(1,'api',this)">
+      <div class="option-icon">🔎</div>
+      <div>
+        <div class="opt-title">Let another system ask for data when it needs it</div>
+        <div class="opt-desc">Like a search or query — one system requests specific records, reports, or data from another on demand</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(1,'hie',this)">
+      <div class="option-icon">🌐</div>
+      <div>
+        <div class="opt-title">Connect to a national or regional health data network</div>
+        <div class="opt-desc">Joining a shared platform where multiple hospitals, clinics, or agencies exchange patient data — sometimes called a health information exchange or HIE</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(1,'regulatory',this)">
+      <div class="option-icon">📋</div>
+      <div>
+        <div class="opt-title">Meet a government or accreditation requirement</div>
+        <div class="opt-desc">A law, regulation, or official standard your organisation must comply with — you may have been told which standard is required</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(1,'internal',this)">
+      <div class="option-icon">🏥</div>
+      <div>
+        <div class="opt-title">Move data between systems inside our own organisation</div>
+        <div class="opt-desc">Connecting internal departments, systems, or software — the data stays within your organisation</div>
+      </div>
+    </button>
+  </div>
+  <div class="q-nav"><div></div><button class="btn btn-primary" id="q1next" onclick="next(1)" disabled>Next →</button></div>
+</div>
+
+<!-- ── Q2 ── -->
+<div class="question-wrap" id="q2">
+  <div class="q-label">Question 2 of 6 — The systems involved</div>
+  <div class="q-title">How would you describe the technology you're connecting?</div>
+  <div class="q-hint">Think about the system where the data currently lives and where it needs to go. If in doubt, "older" means it was set up more than 10 years ago and hasn't been significantly updated.</div>
+  <div class="options">
+    <button class="option" onclick="pick(2,'legacy',this)">
+      <div class="option-icon">🗄️</div>
+      <div>
+        <div class="opt-title">Older hospital or clinic system</div>
+        <div class="opt-desc">Been running for 10+ years. May be described as a "legacy" system. Likely already sends data using HL7 messages — your IT team will know</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(2,'modern',this)">
+      <div class="option-icon">☁️</div>
+      <div>
+        <div class="opt-title">Modern, cloud-based or recently upgraded system</div>
+        <div class="opt-desc">Built or significantly upgraded in the last 5 years. Your IT team or vendor may have mentioned "FHIR API" or "SMART on FHIR" — that's a sign it's modern</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(2,'custom',this)">
+      <div class="option-icon">🚀</div>
+      <div>
+        <div class="opt-title">A brand new app or product I'm designing now</div>
+        <div class="opt-desc">You're building something from scratch. No legacy constraints — you get to choose the technology</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(2,'mixed',this)">
+      <div class="option-icon">🔀</div>
+      <div>
+        <div class="opt-title">A mix — some old, some new</div>
+        <div class="opt-desc">The integration spans older systems that have been around for years and newer platforms — you need them to talk to each other</div>
+      </div>
+    </button>
+  </div>
+  <div class="q-nav"><button class="btn btn-ghost" onclick="back(2)">← Back</button><button class="btn btn-primary" id="q2next" onclick="next(2)" disabled>Next →</button></div>
+</div>
+
+<!-- ── Q3 ── -->
+<div class="question-wrap" id="q3">
+  <div class="q-label">Question 3 of 6 — Direction of data flow</div>
+  <div class="q-title">How should data move between the systems?</div>
+  <div class="q-hint">This is one of the most important questions. Think about whether data is pushed out automatically or pulled in on request.</div>
+  <div class="options">
+    <button class="option" onclick="pick(3,'push',this)">
+      <div class="option-icon">📤</div>
+      <div>
+        <div class="opt-title">System A automatically sends data when something happens</div>
+        <div class="opt-desc">Like a notification or alert — when a patient is admitted, an order is placed, or a result arrives, the sending system fires data across without being asked</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(3,'pull',this)">
+      <div class="option-icon">📥</div>
+      <div>
+        <div class="opt-title">System B asks for data whenever it needs it</div>
+        <div class="opt-desc">Like a search — the receiving system makes a request: "give me this patient's latest results" or "show me all diabetic patients in this clinic"</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(3,'both',this)">
+      <div class="option-icon">↔️</div>
+      <div>
+        <div class="opt-title">Both — sending and requesting in both directions</div>
+        <div class="opt-desc">The integration needs to both receive automatic events and also query for data on demand</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(3,'unsure',this)">
+      <div class="option-icon">❓</div>
+      <div>
+        <div class="opt-title">Not sure yet — still in the planning stage</div>
+        <div class="opt-desc">The technical design hasn't been decided. This tool can still give you useful guidance based on your other answers</div>
+      </div>
+    </button>
+  </div>
+  <div class="q-nav"><button class="btn btn-ghost" onclick="back(3)">← Back</button><button class="btn btn-primary" id="q3next" onclick="next(3)" disabled>Next →</button></div>
+</div>
+
+<!-- ── Q4 ── -->
+<div class="question-wrap" id="q4">
+  <div class="q-label">Question 4 of 6 — Where you're based</div>
+  <div class="q-title">Which country or region does this apply to?</div>
+  <div class="q-hint">Different countries have different rules about which standards must be used. This shapes the recommendation — especially for regulatory projects.</div>
+  <div class="jur-grid">
+    <button class="jur-option" onclick="pickJur('us',this)">
+      <div class="jur-flag-img"><span class="fi fi-us" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">United States</div><div class="jur-sub">CMS / ONC / TEFCA</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('canada',this)">
+      <div class="jur-flag-img"><span class="fi fi-ca" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">Canada</div><div class="jur-sub">Health Infoway / Provincial</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('uk',this)">
+      <div class="jur-flag-img"><span class="fi fi-gb" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">United Kingdom</div><div class="jur-sub">NHS England / INTEROPen</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('australia',this)">
+      <div class="jur-flag-img"><span class="fi fi-au" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">Australia / NZ</div><div class="jur-sub">ADHA / Sparked</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('uae',this)">
+      <div class="jur-flag-img"><span class="fi fi-ae" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">UAE / Gulf (GCC)</div><div class="jur-sub">DHA / DoH / MOHAP</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('eu',this)">
+      <div class="jur-flag-img"><span class="fi fi-eu" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">European Union</div><div class="jur-sub">EHDS / national bodies</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('india',this)">
+      <div class="jur-flag-img"><span class="fi fi-in" style="width:48px;height:32px;display:block;background-size:cover;border-radius:4px"></span></div>
+      <div class="jur-name">India</div><div class="jur-sub">NHA / ABDM</div>
+    </button>
+    <button class="jur-option" onclick="pickJur('other',this)">
+      <div class="globe-icon">🌍</div>
+      <div class="jur-name">Other / Global</div><div class="jur-sub">No specific jurisdiction</div>
+    </button>
+  </div>
+  <div class="q-nav"><button class="btn btn-ghost" onclick="back(4)">← Back</button><button class="btn btn-primary" id="q4next" onclick="next(4)" disabled>Next →</button></div>
+</div>
+
+<!-- ── Q5 ── -->
+<div class="question-wrap" id="q5">
+  <div class="q-label">Question 5 of 6 — What's already in place</div>
+  <div class="q-title">What integration technology, if any, does your organisation already use?</div>
+  <div class="q-hint">Existing infrastructure matters — it affects cost, timeline, and risk. If you're not sure, ask your IT team what software they use to connect hospital systems.</div>
+  <div class="options">
+    <button class="option" onclick="pick(5,'engine',this)">
+      <div class="option-icon">⚙️</div>
+      <div>
+        <div class="opt-title">We use integration software that connects our systems</div>
+        <div class="opt-desc">Sometimes called a "middleware" or "interface engine" — tools like Mirth Connect, Rhapsody, or Corepoint that translate and route health messages between systems</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(5,'fhir_api',this)">
+      <div class="option-icon">🔑</div>
+      <div>
+        <div class="opt-title">We have a FHIR API already set up and available</div>
+        <div class="opt-desc">A modern data access point that our source system exposes. If your vendor has given you API credentials or a FHIR endpoint URL, this is you</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(5,'greenfield',this)">
+      <div class="option-icon">🌱</div>
+      <div>
+        <div class="opt-title">Nothing in place — starting completely from scratch</div>
+        <div class="opt-desc">No existing integration layer. This is a new build with no legacy constraints — you get to choose the best approach</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(5,'mixed_infra',this)">
+      <div class="option-icon">🔀</div>
+      <div>
+        <div class="opt-title">A mix — some older integration tools and some newer API capability</div>
+        <div class="opt-desc">The environment has both legacy HL7 pipelines running alongside newer FHIR endpoints — a hybrid situation</div>
+      </div>
+    </button>
+  </div>
+  <div class="q-nav"><button class="btn btn-ghost" onclick="back(5)">← Back</button><button class="btn btn-primary" id="q5next" onclick="next(5)" disabled>Next →</button></div>
+</div>
+
+<!-- ── Q6 ── -->
+<div class="question-wrap" id="q6">
+  <div class="q-label">Question 6 of 6 — Who uses the data</div>
+  <div class="q-title">Who will actually see or act on the data this connection produces?</div>
+  <div class="q-hint">The end user of the data is one of the strongest signals for which standard to choose. Think about who benefits most from the connection.</div>
+  <div class="options">
+    <button class="option" onclick="pick(6,'internal',this)">
+      <div class="option-icon">🏥</div>
+      <div>
+        <div class="opt-title">Staff inside our own organisation</div>
+        <div class="opt-desc">Doctors, nurses, admin, billing, or operations teams — the data stays internal and is used by our own people</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(6,'external',this)">
+      <div class="option-icon">🤝</div>
+      <div>
+        <div class="opt-title">Other healthcare organisations we work with</div>
+        <div class="opt-desc">Referring doctors, labs, pharmacies, insurance companies, or partner hospitals that we share patients with</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(6,'patients',this)">
+      <div class="option-icon">👤</div>
+      <div>
+        <div class="opt-title">Patients or their carers — directly</div>
+        <div class="opt-desc">People will log into an app or website to see their own health records, test results, or care plans — the data goes straight to the patient</div>
+      </div>
+    </button>
+    <button class="option" onclick="pick(6,'developers',this)">
+      <div class="option-icon">👩‍💻</div>
+      <div>
+        <div class="opt-title">External developers building products on top of our data</div>
+        <div class="opt-desc">Software developers or companies who will build apps, tools, or services using our data as a foundation — like an app marketplace or open API</div>
+      </div>
+    </button>
+  </div>
+  <div class="q-nav"><button class="btn btn-ghost" onclick="back(6)">← Back</button><button class="btn btn-amber" id="q6next" onclick="showResults()" disabled>Get my recommendation →</button></div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div id="results">
+
+  <!-- Plain English Summary -->
+  <div class="plain-summary" id="plainSummary"></div>
+
+  <!-- Technical verdict -->
+  <div id="verdictBlock"></div>
+
+  <!-- Signal bars -->
+  <div class="brief-card" style="margin-bottom:16px">
+    <div class="card-label lbl-sub">Signal Strength — how strongly your answers point to each standard</div>
+    <div id="scoreBars"></div>
+    <div style="font-size:12px;color:var(--sub);margin-top:10px">Each answer adds evidence for one standard or the other. A large gap = high confidence. A close gap = a hybrid approach may be right.</div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);margin-bottom:10px">How to read the confidence score</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="background:var(--surface);border-radius:6px;padding:10px 12px;border:1px solid var(--border2)">
+          <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--red);margin-bottom:4px">45–60%</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.5"><strong style="color:var(--text)">Mixed signals.</strong> Both standards have real merit here. Seek specialist advice before deciding.</div>
+        </div>
+        <div style="background:var(--surface);border-radius:6px;padding:10px 12px;border:1px solid var(--border2)">
+          <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--amber);margin-bottom:4px">61–74%</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.5"><strong style="color:var(--text)">Moderate confidence.</strong> One standard is the better fit, but there are real trade-offs to manage.</div>
+        </div>
+        <div style="background:var(--surface);border-radius:6px;padding:10px 12px;border:1px solid var(--border2)">
+          <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--green);margin-bottom:4px">75–95%</div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.5"><strong style="color:var(--text)">High confidence.</strong> Answers consistently point one way. Proceed — but verify your specific vendor's support.</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--sub);margin-top:10px;font-style:italic">The score is capped at 95% — never 100%. The remaining 5% accounts for your specific vendor capabilities, local context, and regulations that may have changed. Real implementation decisions always need human expert review.</div>
+    </div>
+  </div>
+
+  <div class="brief-grid">
+    <div class="brief-card">
+      <div class="card-label lbl-teal">Why this recommendation</div>
+      <ul class="r-list teal" id="rationaleList"></ul>
+    </div>
+    <div class="brief-card">
+      <div class="card-label lbl-red">Risks to address before you build</div>
+      <ul class="r-list red" id="riskList"></ul>
+    </div>
+    <div class="brief-card full">
+      <div class="card-label lbl-amber">How these two standards compare — for your scenario</div>
+      <table class="cmp-table" id="compareTable"></table>
+    </div>
+    <div class="brief-card" id="jurPanel">
+      <div class="card-label lbl-purple">What your country or region requires</div>
+      <div id="jurContent"></div>
+    </div>
+    <div class="brief-card">
+      <div class="card-label lbl-green">Practical next steps</div>
+      <ol class="steps" id="stepsList"></ol>
+    </div>
+  </div>
+
+  <!-- Evidence panel -->
+  <div class="evidence-panel">
+    <button class="evidence-toggle" onclick="toggleEvidence(this)">
+      <span class="evidence-toggle-label">📚 What is this recommendation based on?</span>
+      <span class="evidence-toggle-sub">View sources and limitations</span>
+      <span class="evidence-toggle-arrow">▼</span>
+    </button>
+    <div class="evidence-body" id="evidenceBody">
+      <div class="evidence-disclaimer">
+        ⚠️ <strong>Important:</strong> This tool provides planning guidance, not compliance advice. Regulatory requirements change. Always confirm your organisation's specific obligations with your local regulatory body, legal counsel, or a qualified health informatics specialist before making implementation decisions.
+      </div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:12px">The scoring logic in this tool is grounded in the following published sources. The tool weighs answers against documented decision criteria from HL7 International, national health authorities, and peer-reviewed research.</div>
+      <ul class="evidence-sources">
+        <li><strong>Firely — State of FHIR 2025 Survey</strong> <span class="version-tag">Primary source</span><br>73% of countries with electronic health data regulations now mandate or advise FHIR (up from 65% in 2024). Used to weight regulatory context globally. <a href="https://fire.ly/blog/the-state-of-fhir-in-2025/" target="_blank">fire.ly →</a></li>
+        <li><strong>HL7 International — FHIR R4 Specification</strong> <span class="version-tag">Primary source</span><br>FHIR is designed as a RESTful, query-based standard; HL7 v2 is designed for event-driven, push-based messaging. Used to weight Q1 (purpose) and Q3 (data flow). <a href="https://hl7.org/fhir/R4/" target="_blank">hl7.org →</a></li>
+        <li><strong>Rhapsody Health — FHIR vs HL7 (Updated 2025)</strong><br>"FHIR is generally better for new implementations in 2025 due to modern technology support and regulatory requirements, while HL7 remains essential for existing internal hospital systems." Used to weight Q2 (systems) and Q5 (infrastructure). <a href="https://rhapsody.health/blog/fhir-vs-hl7-explained/" target="_blank">rhapsody.health →</a></li>
+        <li><strong>US — ONC §170.315(g)(10) Final Rule (enforced 2023)</strong><br>Requires certified EHRs to support FHIR R4 APIs for standardised patient data access. ONC HTI-1 Rule (2025) extends to USCDI v3 and SMART on FHIR 2.0. <a href="https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-B/section-170.315" target="_blank">ecfr.gov →</a></li>
+        <li><strong>US — CMS Interoperability and Patient Access Final Rule (CMS-9115)</strong><br>Mandates FHIR APIs for payers covering Medicare Advantage, Medicaid, and ACA plans. <a href="https://www.cms.gov/regulations-and-guidance/legislation/ehrincentiveprograms/downloads/9115f_factsheet.pdf" target="_blank">cms.gov →</a></li>
+        <li><strong>US — CMS Prior Authorization Rule (CMS-0057-F, effective January 2026)</strong><br>Mandates FHIR-based APIs for prior authorization processes between payers and providers, using Da Vinci Implementation Guides. <a href="https://www.cms.gov/newsroom/fact-sheets/cms-interoperability-and-prior-authorization-final-rule-cms-0057-f" target="_blank">cms.gov →</a></li>
+        <li><strong>Canada — Canada Health Infoway CA Core+</strong><br>Canada's national core set of HL7 FHIR profiles, directional but not yet legislatively mandated federally. Pan-Canadian standards roadmap completion expected 2027. <a href="https://infoscribe.infoway-inforoute.ca/spaces/PCI" target="_blank">infoway-inforoute.ca →</a></li>
+        <li><strong>UK — NHS England FHIR UK Core Programme</strong><br>NHS has established FHIR as the core standard for health data exchange; over 75% of healthcare institutions implementing FHIR-based mechanisms. <a href="https://digital.nhs.uk/services/fhir-uk-core" target="_blank">digital.nhs.uk →</a></li>
+        <li><strong>Australia — ADHA National Healthcare Interoperability Plan 2023–2028</strong><br>Australian Digital Health Agency tendered FHIR interoperability build for My Health Record (September 2024). Sparked FHIR Accelerator driving national implementation. <a href="https://www.digitalhealth.gov.au" target="_blank">digitalhealth.gov.au →</a></li>
+        <li><strong>UAE — DHA Standard DHA/HISHD/ST-02 (Issue 2, effective July 2025)</strong><br>Dubai Health Authority mandates both HL7 v2.5 and FHIR-based APIs for NABIDH integration. NABIDH compliance is mandatory for all DHA-licensed facilities. <a href="https://dha.gov.ae" target="_blank">dha.gov.ae →</a></li>
+        <li><strong>UAE — Malaffi (DoH Abu Dhabi) and Riayati (MOHAP Federal)</strong><br>Both platforms use HL7 messaging as primary integration protocol with FHIR APIs for newer application connectivity. <a href="https://sbs-me.com/how-hl7-standards-power-riayati-and-malaffi/" target="_blank">sbs-me.com →</a></li>
+        <li><strong>India — Ayushman Bharat Digital Mission (ABDM), NHA</strong><br>India's national digital health mission is built on FHIR. Health Data Management Policy and ABDM specifications use FHIR R4 as the base standard. <a href="https://abdm.gov.in" target="_blank">abdm.gov.in →</a></li>
+        <li><strong>World Scientific News — Critical Review of Health Data Interoperability Standards (2024)</strong> <span class="version-tag">Peer reviewed</span><br>Peer-reviewed analysis confirming FHIR's extensibility and developer-ecosystem advantages, while noting continued HL7 v2 necessity for operational messaging. <a href="https://worldscientificnews.com/a-critical-review-of-health-data-interoperability-standards-fhir-hl7-and-beyond/" target="_blank">worldscientificnews.com →</a></li>
+        <li style="color:var(--sub)"><em>Tool version: June 2026. Scoring weights last reviewed against published sources: June 2026. Regulatory landscape changes frequently — verify current requirements with your local authority.</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="brief-actions">
+    <button class="btn btn-primary" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn btn-ghost" onclick="copyBrief()">Copy as text</button>
+    <button class="reset-btn" onclick="resetTool()">← Start over</button>
+  </div>
+</div>
+</div><!-- /main -->
+
+<footer>
+  <span>HealthTechX Institute © 2026 · <strong style="color:var(--teal)">Interop Compass</strong> · For education and planning purposes only</span>
+  <div class="footer-links">
+    <a href="https://nmajumder1985.github.io/healthtechx/hl7.html">HL7 Explorer</a>
+    <a href="https://nmajumder1985.github.io/healthtechx/index.html">FHIR Workbench</a>
+  </div>
+</footer>
+
+<script>
+// ── STATE ──
+const A = {}; // answers
+let jurKey = null;
+
+// ── EVIDENCE-BASED WEIGHTS ──
+// Source for each weight documented in evidence panel above
+const W = {
+  q1: {
+    events:     [4, 0],  // HL7.org: v2 designed for event-driven messaging
+    patient:    [0, 5],  // SMART on FHIR requires FHIR R4; no patient auth standard in HL7 v2
+    api:        [0, 4],  // REST API is FHIR's core architecture (HL7 FHIR spec)
+    hie:        [1, 1],  // Jurisdiction-dependent; neutral base
+    regulatory: [0, 2],  // Most mandates specify FHIR (Firely 2025: 73% of regs mandate/advise FHIR)
+    internal:   [2, 0],  // Internal ops messaging historically HL7; no patient-facing requirement
+  },
+  q2: {
+    legacy:     [4, 0],  // 95% of US orgs use HL7 v2 (kodjin.com 2026); similar pattern globally
+    modern:     [0, 4],  // Rhapsody 2025: modern cloud systems are FHIR-native
+    custom:     [0, 3],  // Rhapsody 2025: "FHIR better for new implementations in 2025"
+    mixed:      [1, 1],  // Balanced — depends on other factors
+  },
+  q3: {
+    push:       [3, 0],  // FHIR Subscriptions not widely supported in R4; HL7 v2 designed for push
+    pull:       [0, 3],  // REST GET is FHIR's core pattern (HL7 FHIR spec)
+    both:       [1, 1],  // Balanced; hybrid often appropriate
+    unsure:     [0, 0],  // No signal
+  },
+  // Q4 = jurisdiction (handled separately via jurisdictionWeights)
+  q5: {
+    engine:     [4, 0],  // Existing interface engine = significant HL7 infrastructure asset
+    fhir_api:   [0, 4],  // Active FHIR endpoint eliminates primary FHIR barrier
+    greenfield: [0, 2],  // Rhapsody 2025: FHIR preferred for new builds
+    mixed_infra:[1, 1],  // Balanced
+  },
+  q6: {
+    internal:   [1, 0],  // Internal ops messaging = slight HL7 edge
+    external:   [1, 1],  // Partner exchange: jurisdiction-dependent; balanced
+    patients:   [0, 4],  // SMART on FHIR required for patient-facing auth; no HL7 v2 equivalent
+    developers: [0, 3],  // Developer ecosystems built on FHIR (SMART App Launch, CDS Hooks)
+  }
+};
+
+// ── JURISDICTION WEIGHTS + CONTEXT ──
+// Source: jurisdiction-specific regulatory frameworks documented in evidence panel
+const JUR = {
+  us: {
+    hl7: 0, fhir: 3, // Strong FHIR mandate: ONC §170.315(g)(10), CMS-9115, CMS-0057
+    label: '🇺🇸 United States',
+    context: [
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'ONC §170.315(g)(10) — Certified EHRs must support FHIR R4 APIs (enforced 2023). ONC HTI-1 extends to USCDI v3 and SMART on FHIR 2.0 (2025).' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'CMS-9115 Patient Access Rule — Payers covering Medicare Advantage, Medicaid, and ACA plans must expose FHIR APIs for member data access.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'CMS-0057 Prior Authorization Rule — FHIR-based APIs required for prior authorization between payers and providers (effective January 2026, Da Vinci IGs).' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'TEFCA Facilitated FHIR — The national health data exchange framework (TEFCA) includes Facilitated FHIR as an exchange modality using the FAST Security IG.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 remains the dominant standard for operational messaging (ADT, ORM, ORU) inside US hospitals — 95% of US healthcare organisations use it. No mandate to replace it for internal messaging.' },
+    ]
+  },
+  canada: {
+    hl7: 0, fhir: 1, // Directional but not federally mandated; standards roadmap 2027
+    label: '🇨🇦 Canada',
+    context: [
+      { tag: 'Directional', cls: 'reg-neutral', text: 'Canada Health Infoway CA Core+ — Canada\'s national FHIR profile set, establishing common data exchange profiles across provincial health systems. Directional, not yet legislatively mandated federally.' },
+      { tag: 'In Progress', cls: 'reg-neutral', text: 'Pan-Canadian Interoperability Roadmap — national data standards completion expected 2027 (Connected Care for Canadians Act, 2024). Connected Care for Canadians Act commits to accelerating this.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'PS-CA (pan-Canadian Patient Summary) — Built on FHIR R4, aligned with the International Patient Summary (IPS). The national patient summary specification for cross-jurisdictional sharing.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 remains operationally dominant in most provinces for hospital messaging. Provincial variation is significant — Ontario, BC, Alberta, and Quebec each have their own digital health priorities.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'Check your province: British Columbia, Ontario, and Alberta have active digital health programmes that may have specific FHIR requirements for vendors and providers.' },
+    ]
+  },
+  uk: {
+    hl7: 0, fhir: 3, // NHS FHIR UK Core; 75%+ adoption
+    label: '🇬🇧 United Kingdom',
+    context: [
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'NHS England FHIR UK Core — FHIR is the core standard for health data exchange across the NHS. Over 75% of healthcare institutions implementing FHIR-based mechanisms (Co-Desion 2024).' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'NHS API Programme — NHS Digital\'s API programme mandates FHIR R4 for new national service integrations. Existing Spine services are being migrated to FHIR.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'INTEROPen — The UK clinical informatics community driving FHIR implementation standards including CareConnect (legacy) and UK Core (current).' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 and HL7 v3 remain in use for legacy Spine integrations and some pathology and radiology workflows — particularly in older trust systems.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'Scotland, Wales, and Northern Ireland have devolved digital health programmes — requirements may differ from NHS England. Confirm with the relevant national body.' },
+    ]
+  },
+  australia: {
+    hl7: 0, fhir: 2, // ADHA FHIR programme; My Health Record FHIR API 2024
+    label: '🇦🇺 Australia / New Zealand',
+    context: [
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'Australian Digital Health Agency (ADHA) — National Healthcare Interoperability Plan 2023–2028 sets FHIR as the target standard. FHIR IGs derived from HL7 AU Core and HL7 AU Base.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'My Health Record FHIR API — ADHA issued a tender in September 2024 to build FHIR interoperability capability for My Health Record. FHIR R4 is the target.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'Sparked FHIR Accelerator — Australia\'s national programme to accelerate FHIR standards development and adoption across jurisdictions and vendors.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 remains the dominant operational messaging standard in most Australian hospitals for ADT, pathology, and radiology workflows. Not being replaced for these use cases in the near term.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'New Zealand has its own digital health strategy (Te Whatu Ora). FHIR alignment is underway but at an earlier stage than Australia.' },
+    ]
+  },
+  uae: {
+    hl7: 2, fhir: 1, // Both required; HL7 v2 primary for HIE; FHIR for apps
+    label: '🇦🇪 UAE / Gulf (GCC)',
+    context: [
+      { tag: 'Both', cls: 'reg-both', text: 'DHA NABIDH (Dubai) — Mandatory for all DHA-licensed facilities. NABIDH uses HL7 v2.5 and C-CDA as primary HIE protocols, with FHIR-based APIs for application connectivity. DHA Standard DHA/HISHD/ST-02 (effective July 2025) includes FHIR as Standard Four.' },
+      { tag: 'Both', cls: 'reg-both', text: 'DoH Malaffi (Abu Dhabi) — Abu Dhabi\'s Health Information Exchange uses HL7 messaging standards as the primary protocol. FHIR APIs are used for newer application integrations.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'MOHAP Riayati (Federal UAE) — The federal health data sharing platform is primarily HL7-based. Connecting to Riayati requires HL7-compliant systems.' },
+      { tag: 'Both', cls: 'reg-both', text: 'Practical guidance for UAE: If connecting to NABIDH or Malaffi, you will likely need HL7 v2.5 for the HIE connection AND FHIR APIs for any patient-facing or application layer. Plan for both.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'Saudi Arabia (NCA / MOH), Qatar (PHCC), and Kuwait have their own digital health frameworks — requirements vary across the GCC. Verify with the relevant national body.' },
+    ]
+  },
+  eu: {
+    hl7: 0, fhir: 2, // EHDS alignment; member state variation
+    label: '🇪🇺 European Union',
+    context: [
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'European Health Data Space (EHDS) — The EU\'s framework for cross-border health data sharing aligns with FHIR. The European Electronic Health Record Exchange Format (EEHRxF) is being developed on FHIR.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'Germany (gematik / DiGA) — Germany\'s Digital Health Strategy mandates FHIR for digital health applications (DiGA). Strong FHIR adoption led by gematik standards.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'Lithuania and Switzerland — Among the first countries to adopt FHIR as a primary national standard (Firely State of FHIR 2025).' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'EU member states vary significantly in FHIR readiness. While the EHDS sets a FHIR direction, national implementation is at different stages. Check your country\'s national health IT authority.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 remains dominant in many EU hospitals for operational messaging. FHIR adoption is growing fastest in new government and patient-facing projects.' },
+    ]
+  },
+  india: {
+    hl7: 0, fhir: 2, // ABDM is FHIR-based; HL7 v2 still in hospitals
+    label: '🇮🇳 India',
+    context: [
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'Ayushman Bharat Digital Mission (ABDM) — India\'s national digital health mission is built on FHIR R4. The Health Data Management Policy and ABDM technical specifications use FHIR as the base standard for Health Information Providers and Users.' },
+      { tag: 'FHIR', cls: 'reg-fhir', text: 'National Health Authority (NHA) — NHA\'s Health Information Exchange & Analysis (HIEAX) standards are FHIR-based. ABDM Health Facility Registry and Healthcare Professional Registry use FHIR.' },
+      { tag: 'HL7', cls: 'reg-hl7', text: 'HL7 v2 remains common in private hospital systems and laboratory information systems for internal operational messaging — particularly in legacy HIS installations.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'For new digital health products targeting the Indian market: ABDM FHIR compliance is increasingly expected. Verify current ABDM sandbox access requirements at abdm.gov.in.' },
+    ]
+  },
+  other: {
+    hl7: 0, fhir: 0, // Neutral
+    label: '🌍 Global / Other',
+    context: [
+      { tag: 'Global', cls: 'reg-neutral', text: 'Firely State of FHIR 2025 — 71% of countries report FHIR is actively used for at least some use cases. 73% of countries with electronic health data regulations now mandate or advise FHIR.' },
+      { tag: 'Global', cls: 'reg-neutral', text: 'WHO Digital Health guidance — The World Health Organisation encourages adoption of international interoperability standards including FHIR for global health information exchange.' },
+      { tag: 'Guidance', cls: 'reg-neutral', text: 'For projects spanning multiple countries: FHIR R4 is the safest long-term investment as the globally converging standard. HL7 v2 will remain necessary for operational messaging in most health systems for the foreseeable future.' },
+      { tag: 'Note', cls: 'reg-neutral', text: 'Check your specific country\'s national health IT authority for local requirements before making architecture decisions.' },
+    ]
+  }
+};
+
+// ── QUESTION LABELS (for display in results) ──
+const QL = {
+  q1:{ events:'Automatic event alerts', patient:'Patient-facing app', api:'On-demand data access', hie:'National/regional HIE', regulatory:'Regulatory compliance', internal:'Internal transfer' },
+  q2:{ legacy:'Older legacy system', modern:'Modern cloud system', custom:'Brand new build', mixed:'Mixed systems' },
+  q3:{ push:'Push (automatic)', pull:'Pull (on-demand)', both:'Bidirectional', unsure:'Not yet decided' },
+  q5:{ engine:'Interface engine', fhir_api:'FHIR API available', greenfield:'Greenfield', mixed_infra:'Mixed infrastructure' },
+  q6:{ internal:'Internal teams', external:'External partners', patients:'Patients directly', developers:'External developers' }
+};
+
+// ── PICK ANSWER ──
+function pick(q, val, el) {
+  A['q'+q] = val;
+  document.querySelectorAll(`#q${q} .option`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const btn = document.getElementById('q'+q+'next');
+  if (btn) btn.disabled = false;
+}
+
+function pickJur(key, el) {
+  jurKey = key;
+  A.q4 = key;
+  document.querySelectorAll('#q4 .jur-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('q4next').disabled = false;
+}
+
+// ── NAV ──
+function next(q) {
+  document.getElementById('q'+q).classList.remove('active');
+  document.getElementById('q'+(q+1)).classList.add('active');
+  updateProg(q+1);
+}
+function back(q) {
+  document.getElementById('q'+q).classList.remove('active');
+  document.getElementById('q'+(q-1)).classList.add('active');
+  updateProg(q-1);
+}
+function updateProg(q) {
+  document.getElementById('progressFill').style.width = ((q-1)/6*100)+'%';
+  document.getElementById('progressLabel').textContent = 'Question '+q+' of 6';
+}
+
+// ── SCORE ──
+function calcScores() {
+  let hl7=0, fhir=0;
+  ['q1','q2','q3','q5','q6'].forEach(k => {
+    const v = A[k];
+    if (v && W[k]?.[v]) { hl7 += W[k][v][0]; fhir += W[k][v][1]; }
+  });
+  // Jurisdiction
+  const j = JUR[jurKey || 'other'];
+  hl7 += j.hl7; fhir += j.fhir;
+  return { hl7, fhir };
+}
+
+function getVerdict(hl7, fhir) {
+  const total = hl7 + fhir;
+  const gap = Math.abs(fhir - hl7);
+  const dominance = total > 0 ? (gap / total) : 0;
+  const pct = Math.min(95, Math.max(45, Math.round(50 + dominance * 45)));
+  if (fhir > hl7 + 4) return { std:'FHIR R4', cls:'fhir', pct };
+  if (hl7 > fhir + 4) return { std:'HL7 v2', cls:'hl7', pct };
+  if (fhir > hl7 + 1) return { std:'FHIR R4 (leaning)', cls:'fhir', pct: Math.min(pct, 72) };
+  if (hl7 > fhir + 1) return { std:'HL7 v2 (leaning)', cls:'hl7', pct: Math.min(pct, 72) };
+  return { std:'Plan for both', cls:'both', pct: Math.min(pct, 65) };
+}
+
+// ── PLAIN ENGLISH SUMMARIES ──
+function getPlainSummary(verdict, hl7, fhir) {
+  const stdName = verdict.cls === 'fhir' ? 'FHIR' : verdict.cls === 'hl7' ? 'HL7 v2' : 'both standards';
+  let whatItIs = '';
+  if (verdict.cls === 'fhir') whatItIs = '<strong>FHIR</strong> (pronounced "fire") is a modern standard for sharing health data — think of it like a universal plug socket for healthcare systems. It works like the web, using the same technology behind mobile apps and websites. It\'s what most governments now require for patient apps and new digital health products.';
+  else if (verdict.cls === 'hl7') whatItIs = '<strong>HL7 v2</strong> (Health Level 7 version 2) is the tried-and-tested messaging standard that most hospitals worldwide already use. It\'s been running reliably since the 1990s and is excellent at automatically notifying other systems when things happen — admissions, orders, results. If your hospital already sends data electronically, it\'s almost certainly using HL7 v2.';
+  else whatItIs = 'Your situation calls for <strong>both standards working together</strong>. This is actually common — most health systems use HL7 v2 for internal event messaging and FHIR for external or patient-facing connections. The key is being clear about which workflow uses which standard.';
+  let whyYou = '';
+  const q1 = A.q1, q2 = A.q2, q3 = A.q3, q6 = A.q6;
+  if (verdict.cls === 'fhir') {
+    if (q6 === 'patients') whyYou = 'Because patients will use this directly — through an app or website — FHIR is the only standard that supports secure patient login and data access.';
+    else if (q1 === 'regulatory') whyYou = 'Because you\'re meeting a regulatory requirement, and most current rules specify FHIR, this is the standard to build toward.';
+    else if (q2 === 'modern') whyYou = 'Because your system already supports FHIR, building on it is the natural and lower-risk path.';
+    else if (q3 === 'pull') whyYou = 'Because you need to query for data on demand — like a search — FHIR\'s query-based design is the right fit.';
+    else whyYou = 'The combination of your use case, systems, and context points toward FHIR as the better long-term investment.';
+  } else if (verdict.cls === 'hl7') {
+    if (q2 === 'legacy') whyYou = 'Because your systems are older and already running on HL7 v2, using it for this integration reduces risk, cost, and complexity significantly.';
+    else if (q3 === 'push') whyYou = 'Because you need automatic notifications — data sent when events happen — HL7 v2 is purpose-built for exactly this pattern and is the reliable, proven choice.';
+    else if (q5 === 'engine') whyYou = 'Because you already have integration middleware in place that speaks HL7, using it for this project leverages existing investment.';
+    else whyYou = 'The combination of your use case, systems, and infrastructure points toward HL7 v2 as the practical and appropriate choice.';
+  } else {
+    whyYou = 'Your situation spans both worlds — some workflows are better served by HL7 v2 and others by FHIR. The guidance below helps you decide which standard applies to which part.';
+  }
+  return { stdName, whatItIs, whyYou };
+}
+
+// ── RATIONALE GENERATORS (plain English) ──
+function getRationale(verdict) {
+  const r = [];
+  const q1=A.q1, q2=A.q2, q3=A.q3, q4=A.q4, q5=A.q5, q6=A.q6;
+  if (q6==='patients') r.push('Patients need to log in securely to see their own data. FHIR supports a standard called SMART on FHIR that handles this — HL7 v2 has no equivalent for patient-facing access.');
+  if (q1==='patient') r.push('Apps and websites that patients use directly require FHIR — it\'s the only standard with a recognised framework for secure patient login and mobile access.');
+  if (q1==='events' && verdict.cls==='hl7') r.push('Automatic notifications — like alerts when a patient is admitted or a result arrives — are exactly what HL7 v2 was designed for. It does this reliably and is already running in most hospital systems.');
+  if (q2==='legacy' && verdict.cls==='hl7') r.push('Your existing system already sends HL7 v2 messages. Building on what\'s already there is faster, cheaper, and lower risk than switching standards.');
+  if (q2==='modern') r.push('Modern systems come with FHIR built in. Using it avoids the cost of translation and gives you access to the richer, more structured data model FHIR provides.');
+  if (q2==='custom') r.push('When you\'re building from scratch, FHIR is the better long-term investment. It\'s what the industry is standardising on, and it will be easier to connect to other systems in future.');
+  if (q3==='pull') r.push('Querying for data on demand — like asking "show me this patient\'s records" — is FHIR\'s core design. It uses the same request-response pattern as web APIs and apps.');
+  if (q3==='push' && verdict.cls==='hl7') r.push('Sending data automatically when something happens is HL7 v2\'s strength. It has a well-established, reliable pattern for this that hospitals have used for decades.');
+  if (q5==='fhir_api') r.push('Your source system already has a FHIR endpoint. That removes the biggest technical barrier — you can connect directly without building translation layers.');
+  if (q5==='engine') r.push('Your existing integration middleware already handles HL7. Reusing it reduces cost and means your IT team already knows how to manage it.');
+  if (q5==='greenfield') r.push('Starting fresh means no legacy constraints. FHIR is the right default for new builds — it\'s what regulators, vendors, and the industry are moving toward.');
+  if (q6==='developers') r.push('If developers will build on top of your data, FHIR is what they expect. Tools, documentation, and the developer ecosystem are all built around FHIR APIs.');
+  const jw = JUR[q4||'other'];
+  if (jw.fhir > jw.hl7 && q4 !== 'other') r.push(`In ${jw.label.replace(/^.+ /,'')}, regulatory momentum strongly favours FHIR — making it the safer long-term investment even for projects without an immediate regulatory driver.`);
+  if (jw.hl7 > jw.fhir && q4 !== 'other') r.push(`In ${jw.label.replace(/^.+ /,'')}, the main national health data platforms use HL7 as their primary protocol — making HL7 the practical requirement for health network connectivity.`);
+  return r.slice(0,5);
+}
+
+function getRisks(verdict) {
+  const r = [];
+  const q1=A.q1, q2=A.q2, q3=A.q3, q4=A.q4, q5=A.q5, q6=A.q6;
+  if (verdict.cls==='fhir') {
+    if (q2==='legacy') r.push('Older systems may not have a FHIR R4 endpoint yet. Ask your vendor directly: "Do you support FHIR R4?" before committing to this approach — the answer may affect your timeline significantly.');
+    if (q5==='engine') r.push('Your existing integration middleware is a real asset. Before switching to FHIR, check whether it can also handle FHIR — most modern interface engines can, which avoids replacing what you have.');
+    if (q3==='push') r.push('FHIR isn\'t as good at automatic notifications as HL7 v2. A feature called FHIR Subscriptions does this, but it\'s not yet widely supported by EHR vendors in FHIR R4. Verify vendor support before designing around it.');
+    r.push('FHIR has many versions (R4, R4B, R5). Stick with R4 unless your specific use case requires otherwise — it has the widest support across EHR vendors globally.');
+    r.push('Connecting to FHIR typically requires registering your app with the EHR vendor (especially Epic and Cerner). This can take 2–8 weeks. Factor this into your timeline.');
+  } else if (verdict.cls==='hl7') {
+    if (q6==='patients') r.push('HL7 v2 cannot securely deliver data directly to patients through an app or website. If patients will ever need direct access, you\'ll need to add a FHIR layer on top.');
+    if (q4==='us') r.push('US regulations (ONC, CMS) are increasingly requiring FHIR. An HL7 v2-only approach may need a FHIR translation layer added later for compliance — plan for this now rather than retrofitting later.');
+    r.push('HL7 v2 messages can vary between systems — the same field can mean different things in different hospitals. You\'ll need custom mapping for each connection, which adds time and maintenance.');
+    r.push('HL7 v2 lacks built-in security for modern use cases. Access control needs to be handled at the network or middleware layer — confirm how this will be managed.');
+  } else {
+    r.push('When using both standards, be explicit about which one handles which workflow. Ambiguity here is where projects get expensive. Document the boundary in writing before building.');
+    r.push('Translating between HL7 v2 and FHIR adds complexity and maintenance. A FHIR façade (a FHIR layer sitting on top of existing HL7 infrastructure) can reduce this — worth exploring with your vendor.');
+    r.push('Make sure patient identifiers are consistent between your HL7 and FHIR pipelines. Mismatched patient IDs are the most common cause of data exchange failures.');
+  }
+  return r.slice(0,4);
+}
+
+function getCompareRows(verdict) {
+  const q3=A.q3, q1=A.q1, q4=A.q4;
+  return [
+    ['What kind of connection', 'Automatic event-driven messages (push)', 'On-demand data requests (pull / query)'],
+    ['Best for', 'Hospital-to-hospital operational workflows (admissions, orders, results)', 'Patient apps, analytics, API platforms, and new digital health products'],
+    ['How data looks', 'Pipe-delimited text segments — readable only with specialist tools', 'Structured data (JSON) — easier to read and work with programmatically'],
+    ['Patient app support', '<span class="pill pill-n">Not available</span>', '<span class="pill pill-y">Yes — via SMART on FHIR</span>'],
+    ['Most hospitals already use it', '<span class="pill pill-y">Yes — 95%+ globally</span>', '<span class="pill pill-y">Growing — mandated in US, UK, Australia</span>'],
+    ['Regulatory requirement (in most countries)', '<span class="pill pill-n">Not mandated for new builds</span>', '<span class="pill pill-y">Increasingly mandated</span>'],
+    ['Getting started', '<span class="pill pill-y">Faster if HL7 already running</span>', '<span class="pill pill-p">Needs FHIR API from source system</span>'],
+    ['Developer ecosystem', '<span class="pill pill-p">Specialist HL7 tooling</span>', '<span class="pill pill-y">Large web developer community</span>'],
+  ];
+}
+
+function getSteps(verdict) {
+  const q4=A.q4, q5=A.q5;
+  if (verdict.cls==='fhir') return [
+    'Ask your EHR or source system vendor: "Do you have a FHIR R4 endpoint I can connect to?" — get this answered before any other decision.',
+    'If yes, request API documentation and test credentials. If no, explore a FHIR façade (a translation layer that adds FHIR on top of HL7 infrastructure).',
+    q4==='us' ? 'Identify which regulation applies to your project (ONC, CMS Patient Access, CMS Prior Auth, TEFCA) — each has a specific Implementation Guide you must follow.' : `Check the national digital health body for ${JUR[q4||'other'].label.replace(/^.+ /,'')} for any specific FHIR Implementation Guide you should follow.`,
+    'Try querying the HAPI FHIR public sandbox (a free test environment) to see FHIR in action before connecting to a production system. Link: hapi.fhir.org',
+    'If patients will log in directly, start the SMART on FHIR app registration process with your EHR vendor — allow 2–8 weeks for approval.',
+  ];
+  if (verdict.cls==='hl7') return [
+    'Define the specific trigger events for your integration — for example: "when a patient is admitted" (ADT^A01), "when a lab result is ready" (ORU^R01). Your IT team or vendor can confirm the message types.',
+    'Confirm your existing interface engine (or your vendor\'s) can handle these message types — most can.',
+    'Draft a brief interface specification document: which system sends, which receives, what data fields are included, and what happens on errors.',
+    'Build and test with sample (synthetic) HL7 messages before connecting to a live system. The HL7 Explorer tool on this site can help you understand message structure.',
+    'Set up monitoring so you know immediately if messages stop being delivered — silent failures are the most common HL7 production problem.',
+  ];
+  return [
+    'Map each workflow to the right standard: automatic event notifications → HL7 v2; patient-facing or query-based access → FHIR. Write this down explicitly.',
+    'Explore a FHIR façade: adding a FHIR API layer on top of your existing HL7 infrastructure. This lets you use both standards without replacing anything.',
+    'Confirm both your source systems support their respective standard before designing the architecture.',
+    'Establish a shared patient identifier strategy — patient IDs must be consistent across both HL7 and FHIR pipelines.',
+    'Plan your roadmap: HL7 v2 for now (operational messaging), FHIR for new patient-facing and regulatory projects.',
+  ];
+}
+
+// ── SHOW RESULTS ──
+function showResults() {
+  document.getElementById('q6').classList.remove('active');
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('progressLabel').textContent='Complete';
+
+  const { hl7, fhir } = calcScores();
+  const verdict = getVerdict(hl7, fhir);
+  const { stdName, whatItIs, whyYou } = getPlainSummary(verdict, hl7, fhir);
+  const j = JUR[jurKey||'other'];
+
+  // Plain summary
+  const confCls = verdict.pct>=80?'high':verdict.pct>=65?'med':'low';
+  document.getElementById('plainSummary').innerHTML = `
+    <div class="plain-summary-label">Your recommendation — in plain English</div>
+    <div class="plain-summary-verdict" style="color:${verdict.cls==='fhir'?'var(--teal)':verdict.cls==='hl7'?'var(--amber)':'var(--purple)'}">
+      ${verdict.cls==='both'?'Plan for both HL7 v2 and FHIR':verdict.std === 'FHIR R4'||verdict.std === 'FHIR R4 (leaning)'?'Your best fit: FHIR':'Your best fit: HL7 v2'}
+    </div>
+    <p class="plain-summary-text" style="margin-top:12px">${whatItIs}</p>
+    <p class="plain-summary-text" style="margin-top:10px"><strong>For your situation:</strong> ${whyYou}</p>
+  `;
+
+  // Technical verdict
+  document.getElementById('verdictBlock').innerHTML = `
+    <div class="verdict-block verdict-${verdict.cls}">
+      <div style="flex:1">
+        <span class="verdict-badge badge-${verdict.cls}">${verdict.cls==='both'?'HYBRID':verdict.cls.toUpperCase()}</span>
+        <div class="verdict-std">${verdict.std}</div>
+        <div class="verdict-sub2">Scenario: ${Object.entries(A).filter(([k])=>k!=='q4').map(([k,v])=>QL[k]?.[v]||v).join(' · ')} · ${j.label}</div>
+      </div>
+      <div class="conf-block">
+        <div class="conf-label">Confidence</div>
+        <div class="conf-val conf-${confCls}">${verdict.pct}%</div>
+        <div style="font-size:11px;color:var(--sub)">${verdict.pct>=80?'High':verdict.pct>=65?'Moderate':'Low'}</div>
+      </div>
+    </div>`;
+
+  // Score bars
+  const mx = Math.max(hl7, fhir, 6);
+  document.getElementById('scoreBars').innerHTML = `
+    <div class="score-row"><div class="score-name" style="color:var(--amber)">HL7 v2</div><div class="score-track"><div class="score-bar bar-hl7" style="width:${(hl7/mx)*100}%"></div></div><div class="score-num">${hl7}</div></div>
+    <div class="score-row"><div class="score-name" style="color:var(--teal)">FHIR R4</div><div class="score-track"><div class="score-bar bar-fhir" style="width:${(fhir/mx)*100}%"></div></div><div class="score-num">${fhir}</div></div>`;
+
+  // Rationale
+  document.getElementById('rationaleList').innerHTML = getRationale(verdict).map(r=>`<li>${r}</li>`).join('');
+  // Risks
+  document.getElementById('riskList').innerHTML = getRisks(verdict).map(r=>`<li>${r}</li>`).join('');
+  // Compare
+  const rows = getCompareRows(verdict);
+  document.getElementById('compareTable').innerHTML = `
+    <thead><tr><th>Dimension</th><th class="th-hl7">HL7 v2</th><th class="th-fhir">FHIR R4</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody>`;
+  // Jurisdiction
+  document.getElementById('jurContent').innerHTML = `
+    <div class="jur-panel-title">${j.label} — what applies here</div>
+    <ul class="jur-reg-list">${j.context.map(c=>`<li><span class="${c.cls}">${c.tag}</span>${c.text}</li>`).join('')}</ul>`;
+  // Steps
+  document.getElementById('stepsList').innerHTML = getSteps(verdict).map(s=>`<li>${s}</li>`).join('');
+
+  document.getElementById('results').classList.add('show');
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// ── EVIDENCE TOGGLE ──
+function toggleEvidence(btn) {
+  btn.classList.toggle('open');
+  document.getElementById('evidenceBody').classList.toggle('open');
+}
+
+// ── COPY ──
+function copyBrief() {
+  const { hl7, fhir } = calcScores();
+  const verdict = getVerdict(hl7, fhir);
+  const j = JUR[jurKey||'other'];
+  const { whyYou } = getPlainSummary(verdict, hl7, fhir);
+  const rat = getRationale(verdict);
+  const risks = getRisks(verdict);
+  const steps = getSteps(verdict);
+  const text = [
+    'STANDARD SELECTION BRIEF — HealthTechX Institute',
+    '─'.repeat(50),
+    `Recommended: ${verdict.std} | Confidence: ${verdict.pct}%`,
+    `Jurisdiction: ${j.label}`,
+    `Scenario: ${Object.entries(A).filter(([k])=>k!=='q4').map(([k,v])=>QL[k]?.[v]||v).join(' · ')}`,
+    `Signal scores — HL7 v2: ${hl7} | FHIR R4: ${fhir}`,
+    '',
+    'IN PLAIN TERMS',
+    whyYou,
+    '',
+    'WHY THIS RECOMMENDATION',
+    ...rat.map((r,i)=>`${i+1}. ${r}`),
+    '',
+    'RISKS TO ADDRESS',
+    ...risks.map((r,i)=>`${i+1}. ${r}`),
+    '',
+    'NEXT STEPS',
+    ...steps.map((r,i)=>`${i+1}. ${r}`),
+    '',
+    'SOURCES: HL7 International · Firely State of FHIR 2025 · ONC/CMS Rules · NHS England · ADHA · DHA/HISHD/ST-02 · Canada Health Infoway CA Core+ · NHA ABDM',
+    'DISCLAIMER: Planning guidance only. Not compliance advice. Verify current regulations with your local authority.',
+    '',
+    'Generated by HealthTechX Institute · Interop Compass — June 2026',
+    'nmajumder1985.github.io/healthtechx',
+  ].join('\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const b = event.target;
+    b.textContent = 'Copied ✓';
+    setTimeout(()=>b.textContent='Copy as text',2200);
+  });
+}
+
+// ── RESET ──
+function resetTool() {
+  Object.keys(A).forEach(k=>delete A[k]);
+  jurKey = null;
+  document.querySelectorAll('.question-wrap').forEach(q=>q.classList.remove('active'));
+  document.getElementById('q1').classList.add('active');
+  document.querySelectorAll('.option,.jur-option').forEach(o=>o.classList.remove('selected'));
+  ['q1next','q2next','q3next','q4next','q5next','q6next'].forEach(id=>{ const b=document.getElementById(id); if(b) b.disabled=true; });
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressLabel').textContent='Question 1 of 6';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('evidenceBody').classList.remove('open');
+  document.querySelector('.evidence-toggle')?.classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
